@@ -1,0 +1,23 @@
+- name: apply common configuration
+  hosts: localhost
+  connection: local
+  become: true
+
+  vars_files:
+    - vars/basic.yml
+    - vars/mailhog.yml
+    - vars/mysql.yml
+    - vars/pma.yml
+
+  roles:
+    - { role: basic }
+    - { role: nginx, tags: nginx }
+    - { role: mailhog, tags: mailhog }
+    - { role: mariadb, tags: mysql,mariadb }
+    - { role: php, tags: php }
+    - { role: phpmyadmin, tags: pma }
+    - { role: geerlingguy.composer, vars: { composer_version_branch: '', composer_version: '1.10.17', composer_path: /usr/local/bin/composer } }
+    - { role: geerlingguy.composer, vars: { composer_version: '2.0.7', composer_path: /usr/local/bin/composer2 } }
+    - { role: redis, tags: redis }
+    - { role: andrelohmann.wkhtmltopdf, vars: { wkhtmltopdf_install_google_fonts: True } }
+    - { role: wp-cli, tags: wp }

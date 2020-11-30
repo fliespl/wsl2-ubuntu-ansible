@@ -1,0 +1,5 @@
+mariadb_version: 10.5
+mysql_root_password: root
+
+mysql_user_name: user
+mysql_user_password: user

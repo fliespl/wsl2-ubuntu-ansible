@@ -1,0 +1,7 @@
+wsl_username: user
+wsl_public_key: 'some-ssh-public-key-content'
+
+git_username: git-user
+git_email: git-user@example.com
+
+wsl_domain_ending: wsl

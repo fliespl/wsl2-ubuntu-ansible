@@ -1,0 +1,15 @@
+- name: "Make sure /opt exists"
+  file: path=/opt state=directory mode=0755 owner=root group=root
+
+- name: "Download binary"
+  get_url: url=https://github.com/mailhog/MailHog/releases/download/v{{ mailhog_version }}/MailHog_linux_amd64 dest=/opt/mailhog mode=0755
+
+- name: Mailhog vhost
+  template: src=nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/mailhog.{{ wsl_domain_ending }}.conf
+  notify: reload nginx
+
+- name: Add mailhog init.d daemon script
+  action: template src=templates/init.d-template.j2 dest=/etc/init.d/mailhog mode=0751
+
+- name: Ensure mailhog is started and enabled on boot.
+  service: name=mailhog state=started enabled=true

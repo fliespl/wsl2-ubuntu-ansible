@@ -1,0 +1,27 @@
+- name: Add repository for nginx-mainline (Ubuntu)
+  apt_repository: repo='ppa:ondrej/nginx-mainline'
+
+- name: Install nginx
+  apt: name=nginx-full
+
+- name: "generate main password hash"
+  shell: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048 creates=/etc/ssl/certs/dhparam.pem
+
+- file: path=/etc/nginx/sites-enabled/default state=absent
+
+- file: path=/var/www/html state=absent
+
+- name: prepare global options
+  template:
+    src: 000-main.conf.j2
+    dest: "/etc/nginx/conf.d/000-main.conf"
+  notify: reload nginx
+
+- name: "setup default empty vhosts"
+  template:
+    src: vhost-default.conf.j2
+    dest: "/etc/nginx/sites-enabled/000-default"
+  notify: reload nginx
+
+- name: Ensure nginx is started and enabled on boot.
+  service: name=nginx state=started enabled=true

@@ -1,0 +1,19 @@
+server {
+    listen 80;
+    server_name phpinfo{{ php_version }}.{{ wsl_domain_ending }};
+
+    access_log /var/log/nginx/php{{ php_version }}.{{ wsl_domain_ending }}-access.log;
+    error_log /var/log/nginx/php{{ php_version }}.{{ wsl_domain_ending }}-error.log;
+
+    root /var/www/tools/php;
+    index index.php;
+
+    location ~ ^/(.+\.php)$ {
+        try_files $uri =404;
+        fastcgi_pass unix:/var/run/php/php{{ php_version }}-fpm.sock;
+        fastcgi_split_path_info ^(.+\.php)(.*)$;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}

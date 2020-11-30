@@ -1,0 +1,56 @@
+- name: Add apt key for MariaDB
+  apt_key:
+      keyserver: "{{ mariadb_apt_keyserver }}"
+      id: "{{ mariadb_apt_keyid }}"
+
+- name: Add apt repo for MariaDB
+  apt_repository:
+      repo: deb [arch=amd64,arm64,ppc64el] {{ mariadb_apt_mirror }}/repo/{{ mariadb_version }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} main
+      state: present
+      filename: mariadb
+      update_cache: true
+
+- name: Check if mariadb is installed
+  command: "dpkg -s mariadb-server-{{ mariadb_version }}"
+  register: mariadb_check
+  ignore_errors: yes
+  failed_when: false
+  changed_when: false
+  check_mode: no
+
+- name: Preset mariadb password
+  debconf: name=mariadb-server-{{ mariadb_version }}
+      question='{{ item.question }}'
+      value='{{ item.value }}'
+      vtype='{{ item.vtype }}'
+  with_items:
+      - { question: 'mysql-server/root_password', value: '{{ mariadb_root_password }}', vtype: 'password' }
+      - { question: 'mysql-server/root_password_again', value: '{{ mariadb_root_password }}', vtype: 'password' }
+  when: mariadb_check.stdout.find('install ok installed') == -1
+  no_log: true
+
+- name: Install mariadb
+  apt:
+      name:
+          - mariadb-client
+          - mariadb-server-{{ mariadb_version }}
+          - python3-mysqldb
+      state: present
+
+- name: Ensure mariadb is started and enabled on boot.
+  service: name=mariadb state=started enabled=true
+
+- name: "Setup global config"
+  template: src="mysql.cnf.j2" dest="/etc/mysql/mariadb.conf.d/101-local.cnf" backup=yes
+  notify: restart mariadb
+
+- name: Create main user
+  mysql_user:
+      name: "{{ mariadb_user_name }}"
+      password: "{{ mariadb_user_password }}"
+      priv: '*.*:ALL,GRANT'
+      login_user: root
+  no_log: true
+
+- name: Remove MySQL test database.
+  mysql_db: "name='test' state=absent"

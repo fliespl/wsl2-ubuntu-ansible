@@ -1,0 +1,22 @@
+server {
+    listen 80;
+    server_name pma.{{ wsl_domain_ending }};
+
+    access_log /var/log/nginx/pma.{{ wsl_domain_ending }}-access.log;
+    error_log /var/log/nginx/pma.{{ wsl_domain_ending }}-error.log;
+
+    root {{ pma_vhost_directory }};
+    client_max_body_size 256m;
+
+    index index.php;
+
+    location ~ ^/(.+\.php)$ {
+        try_files $uri =404;
+        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+        fastcgi_split_path_info ^(.+\.php)(.*)$;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+        fastcgi_param PHP_VALUE "upload_max_filesize=256M;\npost_max_size=256M;\nmax_input_vars=10000;";
+    }
+}
