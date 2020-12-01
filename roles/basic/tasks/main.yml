@@ -69,5 +69,12 @@
   become_user: "{{ wsl_username }}"
 
 - name: "Install aliases"
-  template: src=00-aliases.sh dest=/etc/profile.d/00-aliases.sh
-  
+  template:
+    src: bash_aliases.sh
+    dest: "/home/{{ wsl_username }}/.bash_aliases"
+
+- name: Setup DISPLAY variable for vcxsrv
+  lineinfile:
+    path: "/home/{{ wsl_username }}/.bashrc"
+    regexp: '^export DISPLAY='
+    line: 'export DISPLAY=192.168.50.88:0'

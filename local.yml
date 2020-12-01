@@ -10,7 +10,7 @@
     - vars/pma.yml
 
   roles:
-    - { role: basic }
+    - { role: basic, tags: basic }
     - { role: nginx, tags: nginx }
     - { role: mailhog, tags: mailhog }
     - { role: mariadb, tags: mysql,mariadb }

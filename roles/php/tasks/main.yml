@@ -62,32 +62,16 @@
     path: /usr/bin/php7.4
 
 - name: Disable opcache for php 7.4
-  blockinfile:
-    path: /etc/php/7.4/fpm/php.ini
-    block: |
-        realpath_cache_size=4096K
-        realpath_cache_ttl=600
-        opcache.enable=0
-        xdebug.default_enable=1
-        xdebug.remote_autostart=0
-        xdebug.remote_enable=1
-        xdebug.remote_port=9000
-        xdebug.idekey="PHPSTORM"
-        xdebug.remote_timeout=10
+  template: src=templates/php7.4-custom.ini-template.j2 dest="{{ item }}"
+  with_items:
+      - "/etc/php/7.4/fpm/conf.d/99-custom.ini"
+      - "/etc/php/7.4/cli/conf.d/99-custom.ini"
 
 - name: Disable opcache for php 8.0
-  blockinfile:
-    path: /etc/php/8.0/fpm/php.ini
-    block: |
-        realpath_cache_size=4096K
-        realpath_cache_ttl=600
-        opcache.enable=0
-        xdebug.default_enable=1
-        xdebug.remote_autostart=0
-        xdebug.remote_enable=1
-        xdebug.remote_port=9000
-        xdebug.idekey="PHPSTORM"
-        xdebug.remote_timeout=10
+  template: src=templates/php8.0-custom.ini-template.j2 dest="{{ item }}"
+  with_items:
+      - "/etc/php/8.0/fpm/conf.d/99-custom.ini"
+      - "/etc/php/8.0/cli/conf.d/99-custom.ini"
 
 - name: "Make sure /var/www/tools/php exists"
   file: path=/var/www/tools/php state=directory mode=0755 owner=root group=root
