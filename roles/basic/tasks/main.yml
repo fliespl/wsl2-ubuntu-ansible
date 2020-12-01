@@ -78,3 +78,23 @@
     path: "/home/{{ wsl_username }}/.bashrc"
     regexp: '^export DISPLAY='
     line: 'export DISPLAY=192.168.50.88:0'
+
+- name: "Make sure /opt exists"
+  file: path=/opt state=directory mode=0755 owner=root group=root
+
+- template:
+    src: startup_script.sh
+    dest: "/opt/startup_script.sh"
+    mode: 0755
+
+- name: Setup startup script on WSL user
+  lineinfile:
+    path: "/home/{{ wsl_username }}/.bashrc"
+    regexp: '^/opt/startup_script.sh'
+    line: '/opt/startup_script.sh'
+
+- name: Setup startup script on root user as well
+  lineinfile:
+    path: "/root/.bashrc"
+    regexp: '^/opt/startup_script.sh'
+    line: '/opt/startup_script.sh'
