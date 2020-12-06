@@ -20,4 +20,3 @@
     - { role: geerlingguy.composer, vars: { composer_version: '2.0.8', composer_path: /usr/local/bin/composer2 }, tags: composer}
     - { role: redis, tags: redis }
     - { role: andrelohmann.wkhtmltopdf, vars: { wkhtmltopdf_install_google_fonts: True } }
-    - { role: wp-cli, tags: wp }
