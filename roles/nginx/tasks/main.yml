@@ -11,17 +11,5 @@
 
 - file: path=/var/www/html state=absent
 
-- name: prepare global options
-  template:
-    src: 000-main.conf.j2
-    dest: "/etc/nginx/conf.d/000-main.conf"
-  notify: reload nginx
-
-- name: "setup default empty vhosts"
-  template:
-    src: vhost-default.conf.j2
-    dest: "/etc/nginx/sites-enabled/000-default"
-  notify: reload nginx
-
 - name: Ensure nginx is started and enabled on boot.
   service: name=nginx state=started enabled=true
