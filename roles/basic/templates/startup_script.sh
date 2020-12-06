@@ -5,8 +5,20 @@ IPEX=`ip a | grep 192.168.50.16 | wc -l`
 if [[ $IPEX -eq 0 ]]
 then
   sudo ip addr add 192.168.50.16/24 broadcast 192.168.50.255 dev eth0 label eth0:1
-  echo "IP assigned - testing with ping"
-  ping -c 3 192.168.50.88
+fi
+
+((count = 5))
+while [[ $count -ne 0 ]] ; do
+    ping -W 0.2 -c 1 192.168.50.88 2>&1 > /dev/null
+    rc=$?
+    if [[ $rc -eq 0 ]] ; then
+        ((count = 1))
+    fi
+    ((count = count - 1))
+done
+
+if [[ $rc -ne 0 ]] ; then
+    echo "ERROR: Connection with host failed"
 fi
 
 SSH_STATUS=`sudo service ssh status | grep 'is running' | wc -l `

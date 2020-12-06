@@ -80,13 +80,13 @@
   action: template src=templates/index.php-template.j2 dest=/var/www/tools/php/index.php mode=0755
 
 - name: Add phpinfo7.4 vhost
-  action: template src=templates/nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/phpinfo7.4.{{ wsl_domain_ending }}.conf mode=0755
+  action: template src=templates/nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/phpinfo7.4.{{ wsl_domain_ending }}.conf
   vars:
       php_version: 7.4
   notify: reload nginx
 
 - name: Add phpinfo8.0 vhost
-  action: template src=templates/nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/phpinfo8.0.{{ wsl_domain_ending }}.conf mode=0755
+  action: template src=templates/nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/phpinfo8.0.{{ wsl_domain_ending }}.conf
   vars:
       php_version: 8.0
   notify: reload nginx
