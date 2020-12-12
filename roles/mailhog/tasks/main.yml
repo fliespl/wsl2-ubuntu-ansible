@@ -1,12 +1,15 @@
 - name: "Make sure /opt exists"
   file: path=/opt state=directory mode=0755 owner=root group=root
 
+- name: Check if mailhog binary exists
+  stat: path=/opt/mailhog
+  register: register_mailhog_binary
+
 - name: Get Mailhog version
   shell: '/opt/mailhog --version | sed "s/MailHog version: //"'
-  ignore_errors: yes
-  failed_when: false
   changed_when: false
   register: register_mailhog_version
+  when: register_mailhog_binary.stat.exists
 
 - name: "Download binary"
   get_url:
@@ -14,7 +17,7 @@
     dest: /opt/mailhog
     mode: 0755
     force: yes
-  when: register_mailhog_version.rc != 0 or register_mailhog_version.stdout is version(mailhog_version, 'ne')
+  when: not register_mailhog_binary.stat.exists or register_mailhog_version.stdout is version(mailhog_version, 'ne')
 
 - name: Mailhog vhost
   template: src=nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/mailhog.{{ wsl_domain_ending }}.conf

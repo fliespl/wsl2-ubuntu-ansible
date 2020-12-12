@@ -23,6 +23,7 @@
     name:
       - acl
       - ssh
+      - libsecret-1-0
    
 - name: Ensure SSH is started and enabled on boot.
   service: name=ssh state=started enabled=true
@@ -67,11 +68,6 @@
     scope: global
     value: "{{ git_email }}"
   become_user: "{{ wsl_username }}"
-
-- name: "Install aliases"
-  template:
-    src: bash_aliases.sh
-    dest: "/home/{{ wsl_username }}/.bash_aliases"
 
 - name: Setup DISPLAY variable for vcxsrv
   lineinfile:
