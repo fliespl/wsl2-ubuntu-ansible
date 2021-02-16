@@ -1,0 +1,38 @@
+- name: Install microsoft .deb package
+  apt:
+    deb: https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+    update_cache: yes
+    cache_valid_time: 86400
+
+- name: Install packages
+  apt:
+    state: present
+    name:
+      - daemonize
+      - dotnet-runtime-5.0
+
+- name: Install genie
+  apt:
+    deb: https://github.com/arkane-systems/genie/releases/download/1.34/systemd-genie_1.34_amd64.deb
+
+- name: Setup genie for {{ wsl_username }}
+  blockinfile:
+    create: yes
+    path: /home/{{ wsl_username }}/.bashrc
+    marker: "# {mark} ANSIBLE BLOCK - GENIE"
+    block: |
+        if [[ ! -v INSIDE_GENIE ]]; then
+          exec /usr/bin/genie -c bash -l
+        fi
+
+- name: Stop & mask broken services
+  systemd: name={{ item }} state=stopped masked=yes
+  with_items:
+    - systemd-remount-fs
+    - multipathd
+
+- name: Setup timeout for systemd
+  lineinfile:
+    path: /etc/genie.ini
+    regexp: '^systemd-timeout='
+    line: 'systemd-timeout=10'

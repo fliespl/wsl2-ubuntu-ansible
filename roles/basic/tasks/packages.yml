@@ -1,0 +1,20 @@
+- name: Update APT package cache
+  apt: update_cache=yes cache_valid_time=86400
+
+- name: Upgrade APT to the latest packages
+  apt: upgrade=safe
+
+- name: Install packages
+  apt:
+    state: present
+    name:
+      - acl
+      - apt-transport-https
+      - curl
+      - ssh
+      - libsecret-1-0
+      - libnss3
+      - libatk-bridge2.0-0
+      - libgtk-3-0
+      - libgbm1
+      - sudo

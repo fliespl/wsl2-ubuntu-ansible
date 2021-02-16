@@ -1,0 +1,10 @@
+- name: Ensure SSH is started and enabled on boot.
+  service: name=ssh state=started enabled=true
+
+- name: Check if /etc/ssh/ssh_host_ed25519_key exists
+  stat: path=/etc/ssh/ssh_host_ed25519_key
+  register: sshkey
+
+- name: create ssh host keys
+  command: "ssh-keygen -A"
+  when: not sshkey.stat.exists
