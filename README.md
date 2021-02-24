@@ -16,6 +16,7 @@ This project is still WIP. Errors can happen every now and then.
 1. Login into wsl2 (typicall `wsl` or `wsl -d distro-name`) and execute following commands
     ```
     sudo apt update
+    sudo apt upgrade
     sudo apt install ansible git
     git clone git@github.com:fliespl/wsl2-ubuntu20.04-ansible.git
     cd wsl2-ubuntu20.04-ansible

@@ -1,8 +1,9 @@
 - name: Install microsoft .deb package
   apt:
     deb: https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
-    update_cache: yes
-    cache_valid_time: 86400
+
+- name: Update APT package cache
+  apt: update_cache=yes
 
 - name: Install packages
   apt:
@@ -13,7 +14,7 @@
 
 - name: Install genie
   apt:
-    deb: https://github.com/arkane-systems/genie/releases/download/1.34/systemd-genie_1.34_amd64.deb
+    deb: https://github.com/arkane-systems/genie/releases/download/v1.35/systemd-genie_1.35_amd64.deb
 
 - name: Setup genie for {{ wsl_username }}
   blockinfile:
@@ -24,15 +25,22 @@
         if [[ ! -v INSIDE_GENIE ]]; then
           exec /usr/bin/genie -c bash -l
         fi
-
-- name: Stop & mask broken services
-  systemd: name={{ item }} state=stopped masked=yes
-  with_items:
-    - systemd-remount-fs
-    - multipathd
+  become_user: "{{ wsl_username }}"
 
 - name: Setup timeout for systemd
   lineinfile:
     path: /etc/genie.ini
     regexp: '^systemd-timeout='
     line: 'systemd-timeout=10'
+
+- name: Stop broken services
+  command: genie -c 'sudo systemctl mask {{ item }}'
+  with_items:
+    - systemd-remount-fs
+    - multipathd
+
+- name: Mask broken services
+  command: genie -c 'sudo systemctl mask {{ item }}'
+  with_items:
+    - systemd-remount-fs
+    - multipathd

@@ -1,9 +1,9 @@
 - include: packages.yml
 
-- include: systemd.yml
+- include: ssh.yml
 
 - include: user.yml
 
-- include: ssh.yml
+- include: systemd.yml
 
 - include: wsl.yml
