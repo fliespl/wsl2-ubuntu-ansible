@@ -1,21 +1,3 @@
-- name: Install microsoft .deb package
-  apt:
-    deb: https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
-
-- name: Update APT package cache
-  apt: update_cache=yes
-
-- name: Install packages
-  apt:
-    state: present
-    name:
-      - daemonize
-      - dotnet-runtime-5.0
-
-- name: Install genie
-  apt:
-    deb: https://github.com/arkane-systems/genie/releases/download/v1.35/systemd-genie_1.35_amd64.deb
-
 - name: Setup genie for {{ wsl_username }}
   blockinfile:
     create: yes
@@ -33,14 +15,8 @@
     regexp: '^systemd-timeout='
     line: 'systemd-timeout=10'
 
-- name: Stop broken services
-  command: genie -c 'sudo systemctl mask {{ item }}'
-  with_items:
-    - systemd-remount-fs
-    - multipathd
-
-- name: Mask broken services
-  command: genie -c 'sudo systemctl mask {{ item }}'
+- name: Stop & mask broken services
+  systemd: name={{ item }} state=stopped masked=yes
   with_items:
     - systemd-remount-fs
     - multipathd
