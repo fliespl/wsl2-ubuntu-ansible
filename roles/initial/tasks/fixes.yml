@@ -1,0 +1,38 @@
+# Generate SSH keys if missing.
+- name: Check if /etc/ssh/ssh_host_ed25519_key exists
+  stat: path=/etc/ssh/ssh_host_ed25519_key
+  register: sshkey
+
+- name: Create ssh host keys
+  command: "ssh-keygen -A"
+  when: not sshkey.stat.exists
+
+# Fix partition label for systemd-remount-fs.service
+- name: Check label for main device
+  shell: e2label $(findmnt -n -o SOURCE /)
+  changed_when: no
+  check_mode: no
+  register: disk_label
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'focal'
+
+- name: Update disk label
+  shell: e2label $(findmnt -n -o SOURCE /) cloudimg-rootfs
+  changed_when: disk_label.stdout|length == 0
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'focal'
+
+# Mask systemd-resolved to not break networking on install
+#- name: Mask systemd-resolved
+#  file:
+#    src: /dev/null
+#    dest: /etc/systemd/system/multi-user.target.wants/systemd-resolved.service
+#    state: link
+#    force: yes
+#  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'focal'
+
+# Mask multipathd manually since systemd is not available yet
+- name: Mask multipathd
+  file:
+    src: /dev/null
+    dest: /etc/systemd/system/multipathd.service
+    state: link
+    force: yes

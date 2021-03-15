@@ -1,5 +1,0 @@
-- name: Add /etc/wsl.conf
-  template: src=templates/wsl.conf-template.j2 dest=/etc/wsl.conf mode=0644
-
-- name: Add /etc/resolv.conf
-  template: src=templates/resolv.conf-template.j2 dest=/etc/resolv.conf mode=0644

@@ -1,0 +1,13 @@
+[Unit]
+Description=Startup - set IP
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/startup.sh
+TimeoutSec=0
+RemainAfterExit=yes
+GuessMainPID=no
+
+[Install]
+RequiredBy = multi-user.target

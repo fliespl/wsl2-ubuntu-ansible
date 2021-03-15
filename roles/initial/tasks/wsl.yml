@@ -1,0 +1,4 @@
+# Setup WSL required features
+
+- name: Add /etc/wsl.conf
+  template: src=etc.wsl.conf.j2 dest=/etc/wsl.conf mode=0644

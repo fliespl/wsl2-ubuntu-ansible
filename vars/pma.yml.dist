@@ -1,4 +1,0 @@
-phpmyadmin_version: 5.0.4
-phpmyadmin_mysql_control_user: pma
-phpmyadmin_mysql_control_password: pma
-phpmyadmin_mysql_control_database: phpmyadmin

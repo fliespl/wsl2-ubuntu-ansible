@@ -1,0 +1,2 @@
+- name: restart mailhog
+  service: name=mailhog state=restarted

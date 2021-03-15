@@ -1,0 +1,3 @@
+- apt:
+    name: nginx-full
+    state: present

@@ -1,0 +1,16 @@
+- name: apply web
+  hosts: localhost
+  connection: local
+  become: true
+
+  vars_files:
+    - [ "vars/setup.yml.dist" ] #always load dist in case of missing entries in vars/setup.yml
+    - [ "vars/setup.yml", "vars/setup.yml.dist" ] # fallback to .dist
+
+  roles:
+    - { role: web/nginx, tags: nginx }
+    - { role: web/mailhog, tags: mailhog }
+    - { role: web/redis, tags: redis }
+    - { role: web/mariadb, tags: mysql,mariadb }
+    - { role: web/php, tags: php }
+    - { role: web/phpmyadmin, tags: pma }

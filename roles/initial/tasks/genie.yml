@@ -1,0 +1,20 @@
+- name: Add systemd-genie key
+  apt_key:
+    id: BA078ABB
+    url: https://arkane-systems.github.io/wsl-transdebian/apt/wsl-transdebian.gpg
+
+- name: Add systemd-genie repository
+  apt_repository:
+    repo: deb https://arkane-systems.github.io/wsl-transdebian/apt/ {{ ansible_distribution_release }} main
+    filename: systemd-genie
+
+- name: Install systemd-genie
+  apt:
+    name: systemd-genie
+    state: present
+
+- name: Smaller timeout in default genie setup
+  lineinfile:
+    path: /etc/genie.ini
+    regexp: '^systemd-timeout='
+    line: 'systemd-timeout=30'

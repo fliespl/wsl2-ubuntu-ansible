@@ -1,5 +1,0 @@
-mariadb_version: 10.5
-mariadb_root_password: root
-
-mariadb_user_name: user
-mariadb_user_password: user

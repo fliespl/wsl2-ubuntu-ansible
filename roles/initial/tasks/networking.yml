@@ -1,0 +1,40 @@
+# Setup resolv.conf for static connection with Windows
+- name: Setup resolv conf
+  template: src=etc.resolv.conf.j2 dest=/etc/resolv.conf mode=0644
+  when: ansible_distribution == 'Debian' and ansible_distribution_release == 'buster'
+
+- name: Setup systemd-resolved
+  template: src=etc.systemd.resolved.conf.j2 dest=/etc/systemd/resolved.conf mode=0644
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'focal'
+
+# Setup startup service that setups IP on each launch
+- name: "Make sure /opt exists"
+  file: path=/opt state=directory mode=0755 owner=root group=root
+
+- name: "Install startup.sh"
+  template:
+    src: opt.startup.sh.j2
+    dest: "/opt/startup.sh"
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Check if ip is assigned
+  shell: "ip -o addr show label eth0:100 | awk '{print $4}'"
+  failed_when: false
+  changed_when: false
+  register: ip_info
+
+- name: Execute startup script
+  shell: /opt/startup.sh
+  when: ip_info.stdout|length == 0 or ip_info.stdout|replace('/24', '') != wsl_private_ip
+
+- name: Install startup.service unit file
+  template: src=etc.systemd.startup.service.j2 dest=/etc/systemd/system/startup.service
+
+# Cannot use service just yet, cause bottle is not ready.
+- name: Setup symlink for service
+  file:
+    src: /etc/systemd/system/startup.service
+    dest: /etc/systemd/system/multi-user.target.wants/startup.service
+    state: link

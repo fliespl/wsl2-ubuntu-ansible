@@ -1,1 +1,0 @@
-c:\windows\system32\wsl.exe -d ubuntu-20.04 -u root /etc/rc.local

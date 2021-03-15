@@ -1,0 +1,7 @@
+#!/bin/bash
+
+IP_TO_DELETE=$(ip -o addr show label eth0:100 | awk '{print $4}')
+
+[[ -n "$IP_TO_DELETE" ]] && ip addr del "$IP_TO_DELETE" dev eth0
+
+ip addr add {{ wsl_private_ip }}/24 broadcast 192.168.50.255 dev eth0 label eth0:100

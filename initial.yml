@@ -1,0 +1,11 @@
+- name: initial items to install services properly
+  hosts: localhost
+  connection: local
+  become: true
+
+  vars_files:
+    - [ "vars/setup.yml.dist" ] #always load dist in case of missing entries in vars/setup.yml
+    - [ "vars/setup.yml", "vars/setup.yml.dist" ] # fallback to .dist
+
+  roles:
+    - { role: initial, tags: initial }

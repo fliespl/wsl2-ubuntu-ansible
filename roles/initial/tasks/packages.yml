@@ -1,0 +1,10 @@
+- name: Install packages required by various os
+  apt:
+    name:
+      - acl
+      - curl
+      - e2fsprogs
+      - gnupg
+      - sudo
+      - ssh
+    state: present

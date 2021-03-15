@@ -1,18 +1,3 @@
-- name: Add wsl user
-  user:
-    name: "{{ wsl_username }}"
-    shell: /bin/bash
-
-- name: Allow {{ wsl_username }} to sudo
-  template:
-    src: sudoers-template.j2
-    dest: /etc/sudoers.d/{{ wsl_username }}
-    owner: root
-    group: root
-    mode: '0440'
-    backup: no
-    validate: '/usr/sbin/visudo -cf %s'
-
 - git_config:
     name: user.name
     scope: global
