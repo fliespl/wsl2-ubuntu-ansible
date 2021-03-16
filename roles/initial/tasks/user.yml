@@ -29,5 +29,7 @@
 
       if [[ ! -v INSIDE_GENIE ]]; then
         exec /usr/bin/genie -c bash -l
+      else
+        echo -e "\e[92m * Safely within bottle.\e[39m"
       fi
   become_user: "{{ wsl_username }}"
