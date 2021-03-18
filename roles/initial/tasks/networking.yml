@@ -11,12 +11,12 @@
 - name: "Make sure /opt exists"
   file: path=/opt state=directory mode=0755 owner=root group=root
 
-- name: Setup dnsmasq
-  template: src=etc.dnsmasq.d.wsl.conf.j2 dest=/etc/dnsmasq.d/wsl.conf mode=0644
-
 - apt:
     name: dnsmasq
     state: present
+
+- name: Setup dnsmasq
+  template: src=etc.dnsmasq.d.wsl.conf.j2 dest=/etc/dnsmasq.d/wsl.conf mode=0644
 
 - name: "Install startup.sh"
   template:
