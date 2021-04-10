@@ -33,3 +33,17 @@
         echo -e "\e[92m * Safely within bottle.\e[39m"
       fi
   become_user: "{{ wsl_username }}"
+
+- name: Setup DISPLAY variable for vcxsrv
+  lineinfile:
+    path: "/home/{{ wsl_username }}/.bashrc"
+    regexp: '^export DISPLAY='
+    line: 'export DISPLAY={{wsl_windows_ip}}:0'
+  become_user: "{{ wsl_username }}"
+
+- name: Uncomment colorful terminal in .bashrc
+  lineinfile:
+    path: /home/{{ wsl_username }}/.bashrc
+    regexp: '^#force_color_prompt=(yes|no)'
+    line: 'force_color_prompt=yes'
+  become_user: "{{ wsl_username }}"
