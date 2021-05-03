@@ -4,8 +4,19 @@
     id: BC528686B50D79E339D3721CEB3E94ADBE1229CF
     state: present
 
-- name: Add repository for nginx-mainline (Ubuntu)
-  apt_repository: repo='ppa:ondrej/nginx-mainline'
+- name: Add repository for nginx-mainline (Ubuntu Focal)
+  apt_repository:
+    repo: 'ppa:ondrej/nginx-mainline'
+    filename: nginx
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['focal']
+
+
+- name: Add repository for nginx-mainline (Ubuntu Hirsute)
+  apt_repository:
+    repo: 'ppa:ondrej/nginx-mainline'
+    codename: 'groovy' # todo update to hirsute
+    filename: nginx
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['hirsute']
 
 - name: Install nginx
   apt: name=nginx-full

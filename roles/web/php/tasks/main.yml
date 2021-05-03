@@ -1,5 +1,5 @@
 - include: ubuntu.yml
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'focal'
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['focal', 'hirsute']
 
 - include: debian.yml
   when: ansible_distribution == 'Debian' and ansible_distribution_release == 'buster'

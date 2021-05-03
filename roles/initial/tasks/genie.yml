@@ -3,13 +3,13 @@
     id: BA078ABB
     url: https://arkane-systems.github.io/wsl-transdebian/apt/wsl-transdebian.gpg
 
-- name: Add systemd-genie repository
+- name: Add systemd-genie repository (Ubuntu Hirsute)
   apt_repository:
-    repo: deb https://arkane-systems.github.io/wsl-transdebian/apt/ focal main
+    repo: deb https://arkane-systems.github.io/wsl-transdebian/apt/ focal main  # TODO: fix hirsute when available
     filename: systemd-genie
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'hirsute'  # TODO: fix when available
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'hirsute'
 
-- name: Add systemd-genie repository
+- name: Add systemd-genie repository (Ubuntu Focal)
   apt_repository:
     repo: deb https://arkane-systems.github.io/wsl-transdebian/apt/ {{ ansible_distribution_release }} main
     filename: systemd-genie
