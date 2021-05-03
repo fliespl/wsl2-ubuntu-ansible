@@ -5,8 +5,15 @@
 
 - name: Add systemd-genie repository
   apt_repository:
+    repo: deb https://arkane-systems.github.io/wsl-transdebian/apt/ focal main
+    filename: systemd-genie
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'hirsute'  # TODO: fix when available
+
+- name: Add systemd-genie repository
+  apt_repository:
     repo: deb https://arkane-systems.github.io/wsl-transdebian/apt/ {{ ansible_distribution_release }} main
     filename: systemd-genie
+  when: ansible_distribution_release != 'hirsute'
 
 - name: Install systemd-genie
   apt:

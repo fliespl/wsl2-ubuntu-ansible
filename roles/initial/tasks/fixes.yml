@@ -13,21 +13,12 @@
   changed_when: no
   check_mode: no
   register: disk_label
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'focal'
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['focal', 'hirsute']
 
 - name: Update disk label
   shell: e2label $(findmnt -n -o SOURCE /) cloudimg-rootfs
   changed_when: disk_label.stdout|length == 0
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'focal'
-
-# Mask systemd-resolved to not break networking on install
-#- name: Mask systemd-resolved
-#  file:
-#    src: /dev/null
-#    dest: /etc/systemd/system/multi-user.target.wants/systemd-resolved.service
-#    state: link
-#    force: yes
-#  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'focal'
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['focal', 'hirsute']
 
 # Mask multipathd manually since systemd is not available yet
 - name: Mask multipathd

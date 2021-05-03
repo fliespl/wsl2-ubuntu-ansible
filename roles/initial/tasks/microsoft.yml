@@ -6,11 +6,11 @@
     id: BC528686B50D79E339D3721CEB3E94ADBE1229CF
     state: present
 
-- name: Add microsoft repository (Ubuntu)
+- name: Add microsoft repository (Ubuntu 20.04 / 21.04) # TODO: fix when 21.04 available
   apt_repository:
     repo: deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod focal main
     filename: microsoft
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'focal'
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['hirsute', 'focal']
 
 - name: Add microsoft repository (Debian)
   apt_repository:
