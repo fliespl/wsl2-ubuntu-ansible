@@ -25,3 +25,9 @@
     path: /etc/genie.ini
     regexp: '^systemd-timeout='
     line: 'systemd-timeout=30'
+
+- name: Resolved stub fix
+  lineinfile:
+    path: /etc/genie.ini
+    regexp: '^resolved-stub='
+    line: 'resolved-stub=true'

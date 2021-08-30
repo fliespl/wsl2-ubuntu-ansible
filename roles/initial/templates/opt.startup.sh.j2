@@ -6,4 +6,4 @@ IP_TO_DELETE=$(ip -o addr show label eth0:100 | awk '{print $4}')
 
 ip addr add {{ wsl_private_ip }}/24 dev eth0 label eth0:100
 
-sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+#sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
