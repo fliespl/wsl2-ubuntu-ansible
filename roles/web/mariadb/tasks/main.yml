@@ -15,7 +15,7 @@
     state: present
     filename: mariadb
     update_cache: true
-  when: ansible_distribution_release == 'focal'
+  when: ansible_distribution_release in ['focal', 'hirsute']
 
 - name: Check if mariadb is installed
   command: "dpkg -s mariadb-server-{{ mariadb_version }}"

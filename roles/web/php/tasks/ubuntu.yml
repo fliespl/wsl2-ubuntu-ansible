@@ -17,12 +17,30 @@
           - php8.1-cli
       check_mode: true
   rescue:
+    - name: "Remove invalid repo"
+      file:
+        path: /etc/apt/sources.list.d/php.list
+        state: absent
+
     - name: "{{ ansible_distribution_release }} repository missing. Fallback to impish"
       ansible.builtin.apt_repository:
         repo: 'deb [signed-by=/usr/share/keyrings/php-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu impish main'
         filename: php
       when: ansible_distribution_release in ['jammy']
 
+    - name: "{{ ansible_distribution_release }} repository missing. Fallback to focal"
+      ansible.builtin.apt_repository:
+        repo: 'deb [signed-by=/usr/share/keyrings/php-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu focal main'
+        filename: php
+      when: ansible_distribution_release in ['hirsute']
+
+    - ansible.builtin.apt:
+        name:
+          - php7.4-cli
+          - php8.0-cli
+          - php8.1-cli
+      check_mode: true
+
     - fail:
         msg: "No fallback for: {{ ansible_distribution_release }}"
-      when: ansible_distribution_release not in ['jammy']
+      when: ansible_distribution_release not in ['jammy', 'hirsute']

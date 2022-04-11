@@ -10,16 +10,37 @@
       ansible.builtin.apt_repository:
         repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/nginx-mainline/ubuntu {{ ansible_distribution_release }} main"
         filename: "nginx"
+
+    - ansible.builtin.apt:
+        name:
+          - nginx-full
+      check_mode: true
   rescue:
+    - name: "Remove invalid repo"
+      file:
+        path: /etc/apt/sources.list.d/nginx.list
+        state: absent
+
     - name: "{{ ansible_distribution_release }} repository missing. Fallback to impish"
       ansible.builtin.apt_repository:
         repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/nginx-mainline/ubuntu impish main"
         filename: "nginx"
       when: ansible_distribution_release in ['jammy']
 
+    - name: "{{ ansible_distribution_release }} repository missing. Fallback to groovy"
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/nginx-mainline/ubuntu groovy main"
+        filename: "nginx"
+      when: ansible_distribution_release in ['hirsute']
+
+    - ansible.builtin.apt:
+        name:
+          - nginx-full
+      check_mode: true
+
     - fail:
         msg: "No fallback for: {{ ansible_distribution_release }}"
-      when: ansible_distribution_release not in ['jammy']
+      when: ansible_distribution_release not in ['jammy', 'hirsute']
 
 - name: Install nginx
   apt: name=nginx-full
