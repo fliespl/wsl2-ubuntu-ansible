@@ -1,0 +1,23 @@
+[req]
+default_bits = 2048
+prompt = no
+default_md = sha256
+x509_extensions = v3_req
+distinguished_name = dn
+
+[dn]
+C = PL
+ST = ZP
+L = Szczecin
+O =  WSL Gurus
+OU =  DEV
+emailAddress = webmaster@{{ wsl_domain_ending }}
+CN = {{ wsl_domain_ending }}
+
+[v3_req]
+subjectAltName = @alt_names
+
+[alt_names]
+{% for domain in ssl_domains_prefix %}
+DNS.{{ loop.index }} = {{ domain }}.{{ wsl_domain_ending }}
+{% endfor %}

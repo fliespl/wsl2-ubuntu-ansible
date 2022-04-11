@@ -3,31 +3,31 @@
     id: BA078ABB
     url: https://arkane-systems.github.io/wsl-transdebian/apt/wsl-transdebian.gpg
 
-- name: Add systemd-genie repository (Ubuntu Hirsute)
-  apt_repository:
-    repo: deb https://arkane-systems.github.io/wsl-transdebian/apt/ focal main  # TODO: fix hirsute when available
-    filename: systemd-genie
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'hirsute'
-
-- name: Add systemd-genie repository (Ubuntu Focal)
+- name: Add systemd-genie repository (Ubuntu {{ ansible_distribution_release }})
   apt_repository:
     repo: deb https://arkane-systems.github.io/wsl-transdebian/apt/ {{ ansible_distribution_release }} main
     filename: systemd-genie
-  when: ansible_distribution_release != 'hirsute'
 
 - name: Install systemd-genie
   apt:
     name: systemd-genie
     state: present
 
+
+- name: Setup default target
+  file:
+    src: /usr/lib/systemd/system/multi-user.target
+    dest: /etc/systemd/system/default.target
+    state: link
+
 - name: Smaller timeout in default genie setup
   lineinfile:
     path: /etc/genie.ini
     regexp: '^systemd-timeout='
     line: 'systemd-timeout=30'
-
-- name: Resolved stub fix
-  lineinfile:
-    path: /etc/genie.ini
-    regexp: '^resolved-stub='
-    line: 'resolved-stub=true'
+#
+#- name: Resolved stub fix
+#  ansible.builtin.lineinfile:
+#    path: /etc/genie.ini
+#    regexp: '^resolved-stub='
+#    line: 'resolved-stub=true'

@@ -2,6 +2,16 @@ server {
     listen 80;
     server_name pma.{{ wsl_domain_ending }};
 
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name pma.{{ wsl_domain_ending }};
+
+    ssl_certificate ssl/{{ wsl_domain_ending }}.crt;
+    ssl_certificate_key ssl/{{ wsl_domain_ending }}.key;
+
     access_log /var/log/nginx/pma.{{ wsl_domain_ending }}-access.log;
     error_log /var/log/nginx/pma.{{ wsl_domain_ending }}-error.log;
 

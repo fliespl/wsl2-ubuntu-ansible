@@ -1,2 +1,5 @@
 - name: reload nginx
   service: name=nginx state=reloaded
+
+- name: update trusted ca
+  shell: /usr/sbin/update-ca-certificates --fresh

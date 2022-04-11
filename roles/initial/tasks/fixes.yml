@@ -1,4 +1,4 @@
-# Generate SSH keys if missing.
+# ssh.service - fix
 - name: Check if /etc/ssh/ssh_host_ed25519_key exists
   stat: path=/etc/ssh/ssh_host_ed25519_key
   register: sshkey
@@ -7,23 +7,52 @@
   command: "ssh-keygen -A"
   when: not sshkey.stat.exists
 
-# Fix partition label for systemd-remount-fs.service
+# systemd-remount-fs.service - fix
 - name: Check label for main device
   shell: e2label $(findmnt -n -o SOURCE /)
   changed_when: no
-  check_mode: no
+  check_mode: false
   register: disk_label
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['focal', 'hirsute']
 
 - name: Update disk label
   shell: e2label $(findmnt -n -o SOURCE /) cloudimg-rootfs
   changed_when: disk_label.stdout|length == 0
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['focal', 'hirsute']
 
-# Mask multipathd manually since systemd is not available yet
-- name: Mask multipathd
+# systemd-sysusers.service - fix
+- name: Create systemd-sysusers directory
+  file: path=/etc/systemd/system/systemd-sysusers.service.d/ state=directory
+
+- name: Edit overrides for systemd-sysusers
+  copy:
+    content: |
+      [Service]
+      LoadCredential=
+    dest: /etc/systemd/system/systemd-sysusers.service.d/override.conf
+
+- name: Mask multipathd.service manually since systemd is not available yet
   file:
     src: /dev/null
     dest: /etc/systemd/system/multipathd.service
+    state: link
+    force: yes
+
+- name: Mask fwupd-refresh.service manually since systemd is not available yet
+  file:
+    src: /dev/null
+    dest: /etc/systemd/system/fwupd-refresh.service
+    state: link
+    force: yes
+
+- name: Mask fwupd-refresh.timer manually since systemd is not available yet
+  file:
+    src: /dev/null
+    dest: /etc/systemd/system/fwupd-refresh.timer
+    state: link
+    force: yes
+
+- name: Mask systemd-timedated manually since systemd is not available yet
+  file:
+    src: /dev/null
+    dest: /etc/systemd/system/systemd-timedated.service
     state: link
     force: yes

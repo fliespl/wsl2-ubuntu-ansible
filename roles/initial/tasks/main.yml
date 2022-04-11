@@ -6,8 +6,6 @@
 
 - include: fixes.yml
 
-- include: microsoft.yml
-
 - include: genie.yml
 
 - include: networking.yml

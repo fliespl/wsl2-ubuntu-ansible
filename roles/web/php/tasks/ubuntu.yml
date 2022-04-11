@@ -1,12 +1,5 @@
-- name: Add repository for PHP versions (Ubuntu Focal).
+- name:  Add repository for PHP versions (Ubuntu {{ ansible_distribution_release }})
   apt_repository:
     repo: 'ppa:ondrej/php'
     filename: php
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['focal']
-
-- name: Add repository for PHP versions (Ubuntu Hirsute)
-  apt_repository:
-    repo: 'ppa:ondrej/php'
-    codename: groovy # update to hirsute when available
-    filename: php
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['hirsute']
+  when: ansible_distribution_release in ['focal', 'jammy']

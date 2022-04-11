@@ -1,4 +1,4 @@
-mariadb_version: '10.5'
+mariadb_version: '10.6'
 mariadb_apt_mirror: 'https://ftp.icm.edu.pl/pub/unix/database/mariadb'
 mariadb_apt_keyserver: 'keyserver.ubuntu.com'
 mariadb_apt_keyid: '0xF1656F24C74CD1D8'

@@ -1,8 +1,4 @@
 - include: ubuntu.yml
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['focal', 'hirsute']
-
-- include: debian.yml
-  when: ansible_distribution == 'Debian' and ansible_distribution_release == 'buster'
 
 - name: Install PHP 7.4
   apt:
@@ -56,7 +52,6 @@
       - php8.0-imap
       - php8.0-xdebug
       - php8.0-redis
-      - php8.0-ssh2
 
 - name: Ensure PHP 8.0 FPM is started and enabled on boot.
   service: name=php8.0-fpm state=started enabled=true

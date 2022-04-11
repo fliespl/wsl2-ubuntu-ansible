@@ -3,11 +3,13 @@
 
 - name: Check if mailhog binary exists
   stat: path=/opt/mailhog
+  check_mode: false
   register: register_mailhog_binary
 
 - name: Get Mailhog version
   shell: '/opt/mailhog --version | sed "s/MailHog version: //"'
   changed_when: false
+  check_mode: false
   register: register_mailhog_version
   when: register_mailhog_binary.stat.exists
 

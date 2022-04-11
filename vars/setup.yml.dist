@@ -4,3 +4,17 @@ wsl_windows_ip: 192.168.50.88
 wsl_domain_ending: wsl
 
 # you can add options from other roles below
+
+# roles
+mariadb_version: 10.6
+mariadb_root_password: wsl
+
+mariadb_user_name: wsl
+mariadb_user_password: wsl
+
+ssl_domains_prefix:
+  - "*.site"
+  - "phpinfo"
+  - "*.phpinfo"
+  - "mailhog"
+  - "pma"

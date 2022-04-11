@@ -7,7 +7,7 @@
 
 - name: check identifier
   shell: cat {{ pma_vhost_directory }}/VERSION
-  ignore_errors: yes
+  ignore_errors: true
   failed_when: false
   changed_when: false
   register: pma_version_file

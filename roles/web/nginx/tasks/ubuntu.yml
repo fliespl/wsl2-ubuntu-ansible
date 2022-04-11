@@ -1,22 +1,22 @@
-- name: Add nginx key (Ubuntu)
-  apt_key:
-    url: https://packages.microsoft.com/keys/microsoft.asc
-    id: BC528686B50D79E339D3721CEB3E94ADBE1229CF
-    state: present
-
 - name: Add repository for nginx-mainline (Ubuntu Focal)
   apt_repository:
     repo: 'ppa:ondrej/nginx-mainline'
     filename: nginx
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['focal']
+  when: ansible_distribution_release in ['focal']
 
-
-- name: Add repository for nginx-mainline (Ubuntu Hirsute)
-  apt_repository:
-    repo: 'ppa:ondrej/nginx-mainline'
-    codename: 'groovy' # todo update to hirsute
-    filename: nginx
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['hirsute']
+- name: Add repository for nginx-mainline (Ubuntu jammy)
+  block:
+    - name: Try jammy codename
+      apt_repository:
+        repo: 'ppa:ondrej/nginx-mainline'
+        filename: nginx
+  rescue:
+    - name: Jammy repository missing. Fallback to impish
+      apt_repository:
+        repo: 'ppa:ondrej/nginx-mainline'
+        codename: impish
+        filename: nginx
+  when: ansible_distribution_release in ['jammy']
 
 - name: Install nginx
   apt: name=nginx-full

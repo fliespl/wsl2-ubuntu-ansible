@@ -1,9 +1,4 @@
-- include: debian.yml
-  when: ansible_distribution == 'Debian' and ansible_distribution_release == 'buster'
-
 - include: ubuntu.yml
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['focal', 'hirsute']
-
 
 - name: "generate main password hash"
   shell: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048 creates=/etc/ssl/certs/dhparam.pem
@@ -11,6 +6,50 @@
 - file: path=/etc/nginx/sites-enabled/default state=absent
 
 - file: path=/var/www/html state=absent
+
+- name: prepare global options
+  template:
+    src: 000-main.conf.j2
+    dest: "/etc/nginx/conf.d/000-main.conf"
+  notify: reload nginx
+
+- name: "Make sure /etc/nginx/ssl exists"
+  file:
+    path: /etc/nginx/ssl
+    state: directory
+
+- name: "Create self-signed certificate config"
+  template:
+    src: self-signed-cert.cnf.j2
+    dest: "/etc/nginx/ssl/{{ wsl_domain_ending }}.cnf"
+    owner: root
+    group: root
+    mode: 0700
+  register: certificate_config
+
+- name: "Generate self-signed certificate"
+  shell: openssl req -new -x509 -newkey rsa:2048 -sha256 -nodes -keyout /etc/nginx/ssl/{{ wsl_domain_ending }}.key -days 3560  -out /etc/nginx/ssl/{{ wsl_domain_ending }}.crt -config /etc/nginx/ssl/{{ wsl_domain_ending }}.cnf
+  when: certificate_config.changed
+  notify:
+    - reload nginx
+
+- name: copy certificate authority to trusted ca path
+  copy:
+    remote_src: true
+    src: '/etc/nginx/ssl/{{ wsl_domain_ending }}.crt'
+    dest: '/usr/local/share/ca-certificates'
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - update trusted ca
+
+- name: "setup default empty vhosts"
+  template:
+    src: vhost-default.conf.j2
+    dest: "/etc/nginx/sites-enabled/000-default"
+  notify: reload nginx
+
 
 - name: Ensure nginx is started and enabled on boot.
   service: name=nginx state=started enabled=true

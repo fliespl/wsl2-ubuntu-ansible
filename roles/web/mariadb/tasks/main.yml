@@ -3,11 +3,11 @@
       keyserver: "{{ mariadb_apt_keyserver }}"
       id: "{{ mariadb_apt_keyid }}"
 
-- name: Install a libreadline5 package
-  apt:
-    deb: http://archive.ubuntu.com/ubuntu/pool/main/r/readline5/libreadline5_5.2+dfsg-3build3_amd64.deb
-    state: present
-  when: ansible_distribution_release == 'hirsute'
+#- name: Install a libreadline5 package
+#  apt:
+#    deb: http://archive.ubuntu.com/ubuntu/pool/main/r/readline5/libreadline5_5.2+dfsg-3build3_amd64.deb
+#    state: present
+#  when: ansible_distribution_release == 'hirsute'
 
 - name: Add apt repo for MariaDB
   apt_repository:
@@ -15,23 +15,15 @@
     state: present
     filename: mariadb
     update_cache: true
-  when: ansible_distribution_release != 'hirsute'
-
-- name: Add apt repo for MariaDB
-  apt_repository:
-    repo: deb [arch=amd64,arm64,ppc64el] {{ mariadb_apt_mirror }}/repo/{{ mariadb_version }}/{{ ansible_distribution | lower }} groovy main
-    state: present
-    filename: mariadb
-    update_cache: true
-  when: ansible_distribution_release == 'hirsute'
+  when: ansible_distribution_release == 'focal'
 
 - name: Check if mariadb is installed
   command: "dpkg -s mariadb-server-{{ mariadb_version }}"
   register: mariadb_check
-  ignore_errors: yes
+  ignore_errors: true
   failed_when: false
   changed_when: false
-  check_mode: no
+  check_mode: false
 
 - name: Preset mariadb password
   debconf: name=mariadb-server-{{ mariadb_version }}
