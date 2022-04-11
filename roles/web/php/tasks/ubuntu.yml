@@ -1,5 +1,22 @@
-- name:  Add repository for PHP versions (Ubuntu {{ ansible_distribution_release }})
-  apt_repository:
-    repo: 'ppa:ondrej/php'
-    filename: php
-  when: ansible_distribution_release in ['focal', 'jammy']
+- name: Add repository for PHP versions (Ubuntu {{ ansible_distribution_release }})
+  block:
+    - name: Try {{ ansible_distribution_release }} codename
+      apt_repository:
+        repo: 'ppa:ondrej/php'
+        filename: nginx
+    - apt:
+        name:
+          - php7.4
+          - php8.0
+          - php8.1
+  rescue:
+    - name: Jammy repository missing. Fallback to impish
+      apt_repository:
+        repo: 'ppa:ondrej/nginx-mainline'
+        codename: focal
+        filename: nginx
+      when: ansible_distribution_release in ['jammy']
+
+    - fail:
+        msg: "No fallback for: {{ ansible_distribution_release }}"
+      when: ansible_distribution_release not in ['jammy']
