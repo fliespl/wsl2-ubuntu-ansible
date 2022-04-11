@@ -3,10 +3,17 @@
     url: https://arkane-systems.github.io/wsl-transdebian/apt/wsl-transdebian.gpg
     keyring: /usr/share/keyrings/systemd-archive-keyring.gpg
 
-- name: Add systemd-genie repository (Ubuntu {{ ansible_distribution_release }})
+- name: Add systemd-genie repository (except hirsute)
   ansible.builtin.apt_repository:
     repo: "deb [signed-by=/usr/share/keyrings/systemd-archive-keyring.gpg] https://arkane-systems.github.io/wsl-transdebian/apt/ {{ ansible_distribution_release }} main"
     filename: "systemd-genie"
+  when: ansible_distribution_release != 'hirsute'
+
+- name: Add systemd-genie repository (hirsute)
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/systemd-archive-keyring.gpg] https://arkane-systems.github.io/wsl-transdebian/apt/ focal main"
+    filename: "systemd-genie"
+  when: ansible_distribution_release == 'hirsute'
 
 - name: Install systemd-genie
   apt:

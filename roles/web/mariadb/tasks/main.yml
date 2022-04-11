@@ -3,12 +3,6 @@
       keyserver: "{{ mariadb_apt_keyserver }}"
       id: "{{ mariadb_apt_keyid }}"
 
-#- name: Install a libreadline5 package
-#  apt:
-#    deb: http://archive.ubuntu.com/ubuntu/pool/main/r/readline5/libreadline5_5.2+dfsg-3build3_amd64.deb
-#    state: present
-#  when: ansible_distribution_release == 'hirsute'
-
 - name: Add apt repo for MariaDB
   apt_repository:
     repo: deb [arch=amd64,arm64,ppc64el] {{ mariadb_apt_mirror }}/repo/{{ mariadb_version }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} main
