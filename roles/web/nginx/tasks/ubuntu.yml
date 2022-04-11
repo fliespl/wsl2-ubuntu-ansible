@@ -5,7 +5,7 @@
         repo: 'ppa:ondrej/nginx-mainline'
         filename: nginx
   rescue:
-    - name: {{ ansible_distribution_release }} repository missing. Fallback to impish
+    - name: "{{ ansible_distribution_release }} repository missing. Fallback to impish"
       apt_repository:
         repo: 'ppa:ondrej/nginx-mainline'
         codename: impish
