@@ -1,22 +1,20 @@
-- name: Add repository for nginx-mainline (Ubuntu Focal)
-  apt_repository:
-    repo: 'ppa:ondrej/nginx-mainline'
-    filename: nginx
-  when: ansible_distribution_release in ['focal']
-
-- name: Add repository for nginx-mainline (Ubuntu jammy)
+- name: Add repository for nginx-mainline (Ubuntu {{ ansible_distribution_release }})
   block:
-    - name: Try jammy codename
+    - name: Try {{ ansible_distribution_release }} codename
       apt_repository:
         repo: 'ppa:ondrej/nginx-mainline'
         filename: nginx
   rescue:
-    - name: Jammy repository missing. Fallback to impish
+    - name: {{ ansible_distribution_release }} repository missing. Fallback to impish
       apt_repository:
         repo: 'ppa:ondrej/nginx-mainline'
         codename: impish
         filename: nginx
-  when: ansible_distribution_release in ['jammy']
+      when: ansible_distribution_release in ['jammy']
+
+    - fail:
+        msg: "No fallback for: {{ ansible_distribution_release }}"
+      when: ansible_distribution_release not in ['jammy']
 
 - name: Install nginx
   apt: name=nginx-full

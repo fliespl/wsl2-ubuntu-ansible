@@ -6,14 +6,14 @@
         filename: php
     - apt:
         name:
-          - php7.4
-          - php8.0
-          - php8.1
+          - php7.4-cli
+          - php8.0-cli
+          - php8.1-cli
   rescue:
-    - name: Jammy repository missing. Fallback to impish
+    - name: {{ ansible_distribution_release }} repository missing. Fallback to impish
       apt_repository:
         repo: 'ppa:ondrej/php'
-        codename: focal
+        codename: impish
         filename: php
       when: ansible_distribution_release in ['jammy']
 
