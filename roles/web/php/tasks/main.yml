@@ -55,6 +55,33 @@
 
 - name: Ensure PHP 8.0 FPM is started and enabled on boot.
   service: name=php8.0-fpm state=started enabled=true
+
+- name: Install PHP 8.1
+  apt:
+    name:
+      - php8.1
+      - php8.1-fpm
+      - php8.1-cli
+      - php8.1-common
+      - php8.1-curl
+      - php8.1-mbstring
+      - php8.1-mysql
+      - php8.1-zip
+      - php8.1-igbinary
+      - php8.1-gd
+      - php8.1-bcmath
+      - php8.1-ldap
+      - php8.1-imagick
+      - php8.1-intl
+      - php8.1-bz2
+      - php8.1-soap
+      - php8.1-xml
+      - php8.1-imap
+      - php8.1-xdebug
+      - php8.1-redis
+
+- name: Ensure PHP 8.1 FPM is started and enabled on boot.
+  service: name=php8.1-fpm state=started enabled=true
       
 - name: php version selected
   alternatives:
@@ -77,6 +104,14 @@
   notify:
     - reload php8.0-fpm
 
+- name: Disable opcache for php 8.1
+  template: src=templates/php8.1-custom.ini-template.j2 dest="{{ item }}"
+  with_items:
+    - "/etc/php/8.1/fpm/conf.d/99-custom.ini"
+    - "/etc/php/8.1/cli/conf.d/99-custom.ini"
+  notify:
+    - reload php8.1-fpm
+
 - name: "Make sure /var/www/tools/php exists"
   file: path=/var/www/tools/php state=directory mode=0755 owner=root group=root
 
@@ -93,4 +128,10 @@
   action: template src=templates/nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/phpinfo8.0.{{ wsl_domain_ending }}.conf
   vars:
       php_version: 8.0
+  notify: reload
+
+- name: Add phpinfo8.1 vhost
+  action: template src=templates/nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/phpinfo8.1.{{ wsl_domain_ending }}.conf
+  vars:
+    php_version: 8.1
   notify: reload nginx
