@@ -3,7 +3,7 @@
     - name: Try {{ ansible_distribution_release }} codename
       apt_repository:
         repo: 'ppa:ondrej/php'
-        filename: nginx
+        filename: php
     - apt:
         name:
           - php7.4
@@ -12,9 +12,9 @@
   rescue:
     - name: Jammy repository missing. Fallback to impish
       apt_repository:
-        repo: 'ppa:ondrej/nginx-mainline'
+        repo: 'ppa:ondrej/php'
         codename: focal
-        filename: nginx
+        filename: php
       when: ansible_distribution_release in ['jammy']
 
     - fail:
