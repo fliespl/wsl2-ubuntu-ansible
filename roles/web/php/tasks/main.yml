@@ -128,7 +128,7 @@
   action: template src=templates/nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/phpinfo8.0.{{ wsl_domain_ending }}.conf
   vars:
       php_version: 8.0
-  notify: reload
+  notify: reload nginx
 
 - name: Add phpinfo8.1 vhost
   action: template src=templates/nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/phpinfo8.1.{{ wsl_domain_ending }}.conf

@@ -1,18 +1,17 @@
 - name: Add systemd-genie key
-  apt_key:
-    id: BA078ABB
+  ansible.builtin.apt_key:
     url: https://arkane-systems.github.io/wsl-transdebian/apt/wsl-transdebian.gpg
+    keyring: /usr/share/keyrings/systemd-archive-keyring.gpg
 
 - name: Add systemd-genie repository (Ubuntu {{ ansible_distribution_release }})
-  apt_repository:
-    repo: deb https://arkane-systems.github.io/wsl-transdebian/apt/ {{ ansible_distribution_release }} main
-    filename: systemd-genie
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/systemd-archive-keyring.gpg] https://arkane-systems.github.io/wsl-transdebian/apt/ {{ ansible_distribution_release }} main"
+    filename: "systemd-genie"
 
 - name: Install systemd-genie
   apt:
     name: systemd-genie
     state: present
-
 
 - name: Setup default target
   file:

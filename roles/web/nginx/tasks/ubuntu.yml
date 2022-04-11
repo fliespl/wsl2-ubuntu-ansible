@@ -1,15 +1,20 @@
+- name: Add nginx key
+  ansible.builtin.apt_key:
+    id: "4f4ea0aae5267a6c"
+    keyserver: keyserver.ubuntu.com
+    keyring: /usr/share/keyrings/nginx-archive-keyring.gpg
+
 - name: Add repository for nginx-mainline (Ubuntu {{ ansible_distribution_release }})
   block:
     - name: Try {{ ansible_distribution_release }} codename
-      apt_repository:
-        repo: 'ppa:ondrej/nginx-mainline'
-        filename: nginx
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/nginx-mainline/ubuntu {{ ansible_distribution_release }} main"
+        filename: "nginx"
   rescue:
     - name: "{{ ansible_distribution_release }} repository missing. Fallback to impish"
-      apt_repository:
-        repo: 'ppa:ondrej/nginx-mainline'
-        codename: impish
-        filename: nginx
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/nginx-mainline/ubuntu impish main"
+        filename: "nginx"
       when: ansible_distribution_release in ['jammy']
 
     - fail:

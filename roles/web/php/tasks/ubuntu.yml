@@ -1,19 +1,25 @@
+- name: Add php key
+  ansible.builtin.apt_key:
+    id: "4f4ea0aae5267a6c"
+    keyserver: keyserver.ubuntu.com
+    keyring: /usr/share/keyrings/php-archive-keyring.gpg
+
 - name: Add repository for PHP versions (Ubuntu {{ ansible_distribution_release }})
   block:
     - name: Try {{ ansible_distribution_release }} codename
-      apt_repository:
-        repo: 'ppa:ondrej/php'
+      ansible.builtin.apt_repository:
+        repo: 'deb [signed-by=/usr/share/keyrings/php-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu {{ ansible_distribution_release }} main'
         filename: php
-    - apt:
+    - ansible.builtin.apt:
         name:
           - php7.4-cli
           - php8.0-cli
           - php8.1-cli
+      check_mode: true
   rescue:
     - name: "{{ ansible_distribution_release }} repository missing. Fallback to impish"
-      apt_repository:
-        repo: 'ppa:ondrej/php'
-        codename: impish
+      ansible.builtin.apt_repository:
+        repo: 'deb [signed-by=/usr/share/keyrings/php-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu impish main'
         filename: php
       when: ansible_distribution_release in ['jammy']
 
