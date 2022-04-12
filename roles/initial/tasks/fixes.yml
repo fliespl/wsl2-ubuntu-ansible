@@ -56,3 +56,12 @@
     dest: /etc/systemd/system/systemd-timedated.service
     state: link
     force: yes
+
+# fixes curl bug
+- name: Disable IPv6 DNS lookup
+  lineinfile:
+    dest: /etc/gai.conf
+    line: "precedence ::ffff:0:0/96  100"
+    state: present
+    create: yes
+    backup: yes
