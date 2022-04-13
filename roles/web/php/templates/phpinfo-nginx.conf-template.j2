@@ -1,9 +1,16 @@
 server {
     listen 80;
-    server_name phpinfo{{ php_version }}.{{ wsl_domain_ending }};
+    server_name {{ php_version }}.phpinfo.{{ wsl_domain_ending }};
 
-    access_log /var/log/nginx/php{{ php_version }}.{{ wsl_domain_ending }}-access.log;
-    error_log /var/log/nginx/php{{ php_version }}.{{ wsl_domain_ending }}-error.log;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name {{ php_version }}.phpinfo.{{ wsl_domain_ending }};
+
+    access_log /var/log/nginx/{{ php_version }}.phpinfo.{{ wsl_domain_ending }}-access.log;
+    error_log /var/log/nginx/{{ php_version }}.phpinfo.{{ wsl_domain_ending }}-error.log;
 
     root /var/www/tools/php;
     index index.php;

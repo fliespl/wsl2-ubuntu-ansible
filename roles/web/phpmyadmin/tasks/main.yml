@@ -10,6 +10,7 @@
   ignore_errors: true
   failed_when: false
   changed_when: false
+  check_mode: false
   register: pma_version_file
 
 - name: Check newest version when phpmyadmin_version is latest
@@ -21,6 +22,7 @@
   # | grep -Eo "" | cut -d "/" -f 2'
   changed_when: false
   register: latest_pma
+  check_mode: false
   when: phpmyadmin_version == 'latest'
 
 - set_fact:

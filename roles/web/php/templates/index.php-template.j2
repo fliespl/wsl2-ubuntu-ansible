@@ -1,3 +1,14 @@
-<?php
-
-phpinfo();
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>phpinfo</title>
+  </head>
+  <body>
+    <ul>
+        {% for php_version in php_versions %}
+            <li><a href="https://phpinfo.{{ wsl_domain_ending }}/{{ php_version }}">{{ php_version }}</li>
+        {% endfor %}
+    </ul>
+  </body>
+</html>

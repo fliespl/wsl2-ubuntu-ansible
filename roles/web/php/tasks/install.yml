@@ -1,0 +1,42 @@
+- name: Install PHP {{ php_version }}
+  apt:
+    name:
+      - php{{ php_version }}
+      - php{{ php_version }}-fpm
+      - php{{ php_version }}-cli
+      - php{{ php_version }}-common
+      - php{{ php_version }}-curl
+      - php{{ php_version }}-mbstring
+      - php{{ php_version }}-mysql
+      - php{{ php_version }}-zip
+      - php{{ php_version }}-igbinary
+      - php{{ php_version }}-gd
+      - php{{ php_version }}-bcmath
+      - php{{ php_version }}-ldap
+      - php{{ php_version }}-imagick
+      - php{{ php_version }}-intl
+      - php{{ php_version }}-bz2
+      - php{{ php_version }}-soap
+      - php{{ php_version }}-xmlrpc
+      - php{{ php_version }}-xml
+      - php{{ php_version }}-imap
+      - php{{ php_version }}-xdebug
+      - php{{ php_version }}-redis
+      - php{{ php_version }}-ssh2
+
+- name: Ensure PHP {{ php_version }} FPM is started and enabled on boot.
+  service: name=php{{ php_version }}-fpm state=started enabled=true
+
+- name: Select PHP {{ php_default_version }} version selected
+  alternatives:
+    name: php
+    path: /usr/bin/php{{ php_default_version }}
+
+
+- name: Disable opcache for php {{ php_version }}
+  template: src=templates/php-custom.ini-template.j2 dest="{{ item }}"
+  with_items:
+    - "/etc/php/{{ php_version }}/fpm/conf.d/99-custom.ini"
+    - "/etc/php/{{ php_version }}/cli/conf.d/99-custom.ini"
+  notify:
+    - Reload PHP

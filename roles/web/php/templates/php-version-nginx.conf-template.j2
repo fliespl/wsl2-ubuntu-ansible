@@ -1,0 +1,40 @@
+server {
+    listen 80;
+    server_name phpinfo.{{ wsl_domain_ending }};
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name phpinfo.{{ wsl_domain_ending }};
+
+    access_log /var/log/nginx/phpinfo.{{ wsl_domain_ending }}-access.log;
+    error_log /var/log/nginx/phpinfo.{{ wsl_domain_ending }}-error.log;
+
+    root /var/www/tools/php;
+    index index.php;
+
+{% for php_version in php_versions %}
+    location ^~ /{{ php_version }} {
+        alias /var/www/tools/php;
+        index phpinfo.php;
+
+        location ~ \.php$ {
+            fastcgi_pass unix:/var/run/php/php{{ php_version }}-fpm.sock;
+            fastcgi_split_path_info ^(.+\.php)(.*)$;
+            fastcgi_index phpinfo.php;
+            include fastcgi_params;
+            fastcgi_param  SCRIPT_FILENAME $request_filename;
+        }
+    }
+{% endfor %}
+
+    location ~ ^/(.+\.php)$ {
+        fastcgi_pass unix:/var/run/php/php{{ php_default_version }}-fpm.sock;
+        fastcgi_split_path_info ^(.+\.php)(.*)$;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}

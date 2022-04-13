@@ -4,6 +4,13 @@
     keyserver: keyserver.ubuntu.com
     keyring: /usr/share/keyrings/php-archive-keyring.gpg
 
+- name: Check if php8.1 installed
+  shell: "dpkg-query --showformat='${Version}' --show php8.1-cli"
+  failed_when: false
+  changed_when: false
+  check_mode: false
+  register: register_php_version
+
 - name: Add repository for PHP versions (Ubuntu {{ ansible_distribution_release }})
   block:
     - name: Try {{ ansible_distribution_release }} codename
@@ -44,3 +51,4 @@
     - fail:
         msg: "No fallback for: {{ ansible_distribution_release }}"
       when: ansible_distribution_release not in ['jammy', 'hirsute']
+  when: register_php_version.stdout == '' or '+deb.sury.org' not in register_php_version.stdout

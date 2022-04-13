@@ -4,6 +4,13 @@
     keyserver: keyserver.ubuntu.com
     keyring: /usr/share/keyrings/nginx-archive-keyring.gpg
 
+- name: Check if nginx-full installed
+  shell: "dpkg-query --showformat='${Version}' --show nginx-full"
+  failed_when: false
+  changed_when: false
+  check_mode: false
+  register: register_nginx_version
+
 - name: Add repository for nginx-mainline (Ubuntu {{ ansible_distribution_release }})
   block:
     - name: Try {{ ansible_distribution_release }} codename
@@ -11,7 +18,8 @@
         repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/nginx-mainline/ubuntu {{ ansible_distribution_release }} main"
         filename: "nginx"
 
-    - ansible.builtin.apt:
+    - name: Try installing nginx-full
+      ansible.builtin.apt:
         name:
           - nginx-full
       check_mode: true
@@ -33,7 +41,8 @@
         filename: "nginx"
       when: ansible_distribution_release in ['hirsute']
 
-    - ansible.builtin.apt:
+    - name: Try installing nginx-full
+      ansible.builtin.apt:
         name:
           - nginx-full
       check_mode: true
@@ -41,6 +50,8 @@
     - fail:
         msg: "No fallback for: {{ ansible_distribution_release }}"
       when: ansible_distribution_release not in ['jammy', 'hirsute']
+  when: register_nginx_version.stdout == '' or '+deb.sury.org' not in register_nginx_version.stdout
+
 
 - name: Install nginx
   apt: name=nginx-full

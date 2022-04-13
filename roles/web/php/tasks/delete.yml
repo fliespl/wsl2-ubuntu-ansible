@@ -1,0 +1,14 @@
+- name: "Delete PHP {{ php_version }}"
+  apt:
+    name:
+      - php{{ item }}
+      - php{{ item }}-*
+  state: absent
+  purge: yes
+  autoclean: yes
+  autoremove: yes
+
+- name: Remote /etc/php/{{ php_version }} directory
+  ansible.builtin.file:
+    path: /etc/php/{{ php_version }}
+    state: absent

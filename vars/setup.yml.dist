@@ -18,3 +18,11 @@ ssl_domains_prefix:
   - "*.phpinfo"
   - "mailhog"
   - "pma"
+
+# php
+php_versions:
+   - 7.4
+   - 8.0
+   - 8.1
+
+php_default_version: 8.0

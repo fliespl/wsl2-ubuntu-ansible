@@ -1,137 +1,39 @@
 - include: ubuntu.yml
 
-- name: Install PHP 7.4
-  apt:
-    name:
-      - php7.4
-      - php7.4-fpm
-      - php7.4-cli
-      - php7.4-common
-      - php7.4-curl
-      - php7.4-mbstring
-      - php7.4-mysql
-      - php7.4-zip
-      - php7.4-igbinary
-      - php7.4-gd
-      - php7.4-bcmath
-      - php7.4-ldap
-      - php7.4-imagick
-      - php7.4-intl
-      - php7.4-bz2
-      - php7.4-soap
-      - php7.4-xmlrpc
-      - php7.4-xml
-      - php7.4-imap
-      - php7.4-xdebug
-      - php7.4-redis
-      - php7.4-ssh2
+- name: Get installed php versions
+  no_log: True
+  failed_when: false
+  changed_when: false
+  check_mode: false
+  shell: 'update-alternatives --list php | sed "s/\/usr\/bin\/php//"'
+  register: installed_php_versions
 
-- name: Ensure PHP 7.4 FPM is started and enabled on boot.
-  service: name=php7.4-fpm state=started enabled=true
-      
-- name: Install PHP 8.0
-  apt:
-    name:
-      - php8.0
-      - php8.0-fpm
-      - php8.0-cli
-      - php8.0-common
-      - php8.0-curl
-      - php8.0-mbstring
-      - php8.0-mysql
-      - php8.0-zip
-      - php8.0-igbinary
-      - php8.0-gd
-      - php8.0-bcmath
-      - php8.0-ldap
-      - php8.0-imagick
-      - php8.0-intl
-      - php8.0-bz2
-      - php8.0-soap
-      - php8.0-xml
-      - php8.0-imap
-      - php8.0-xdebug
-      - php8.0-redis
+- set_fact:
+    installed_php_versions: "{{ installed_php_versions.stdout_lines }}"
+    php_versions: "{{ php_versions|map('string') }}"
 
-- name: Ensure PHP 8.0 FPM is started and enabled on boot.
-  service: name=php8.0-fpm state=started enabled=true
+- name: Delete not required versions
+  include_tasks: uninstall.yml
+  when: "php_version not in php_versions|map('string')"
+  loop: "{{ installed_php_versions }}"
+  loop_control:
+    loop_var: php_version
 
-- name: Install PHP 8.1
-  apt:
-    name:
-      - php8.1
-      - php8.1-fpm
-      - php8.1-cli
-      - php8.1-common
-      - php8.1-curl
-      - php8.1-mbstring
-      - php8.1-mysql
-      - php8.1-zip
-      - php8.1-igbinary
-      - php8.1-gd
-      - php8.1-bcmath
-      - php8.1-ldap
-      - php8.1-imagick
-      - php8.1-intl
-      - php8.1-bz2
-      - php8.1-soap
-      - php8.1-xml
-      - php8.1-imap
-      - php8.1-xdebug
-      - php8.1-redis
-
-- name: Ensure PHP 8.1 FPM is started and enabled on boot.
-  service: name=php8.1-fpm state=started enabled=true
-      
-- name: php version selected
-  alternatives:
-    name: php
-    path: /usr/bin/php7.4
-
-- name: Disable opcache for php 7.4
-  template: src=templates/php7.4-custom.ini-template.j2 dest="{{ item }}"
-  with_items:
-      - "/etc/php/7.4/fpm/conf.d/99-custom.ini"
-      - "/etc/php/7.4/cli/conf.d/99-custom.ini"
-  notify:
-    - reload php7.4-fpm
-
-- name: Disable opcache for php 8.0
-  template: src=templates/php8.0-custom.ini-template.j2 dest="{{ item }}"
-  with_items:
-      - "/etc/php/8.0/fpm/conf.d/99-custom.ini"
-      - "/etc/php/8.0/cli/conf.d/99-custom.ini"
-  notify:
-    - reload php8.0-fpm
-
-- name: Disable opcache for php 8.1
-  template: src=templates/php8.1-custom.ini-template.j2 dest="{{ item }}"
-  with_items:
-    - "/etc/php/8.1/fpm/conf.d/99-custom.ini"
-    - "/etc/php/8.1/cli/conf.d/99-custom.ini"
-  notify:
-    - reload php8.1-fpm
+- name: Install required PHP versions
+  include_tasks: install.yml
+  loop: "{{ php_versions }}"
+  loop_control:
+    loop_var: php_version
 
 - name: "Make sure /var/www/tools/php exists"
   file: path=/var/www/tools/php state=directory mode=0755 owner=root group=root
 
-- name: Add phpinfo script
+- name: Add phpinfo index script
   action: template src=templates/index.php-template.j2 dest=/var/www/tools/php/index.php mode=0755
 
-- name: Add phpinfo7.4 vhost
-  action: template src=templates/nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/phpinfo7.4.{{ wsl_domain_ending }}.conf
-  vars:
-      php_version: 7.4
-  notify: reload nginx
+- name: Add phpinfo script
+  action: template src=templates/phpinfo.php-template.j2 dest=/var/www/tools/php/phpinfo.php mode=0755
 
-- name: Add phpinfo8.0 vhost
-  action: template src=templates/nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/phpinfo8.0.{{ wsl_domain_ending }}.conf
-  vars:
-      php_version: 8.0
-  notify: reload nginx
-
-- name: Add phpinfo8.1 vhost
-  action: template src=templates/nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/phpinfo8.1.{{ wsl_domain_ending }}.conf
-  vars:
-    php_version: 8.1
+- name: Install phpinfo vhosts
+  action: template src=templates/php-version-nginx.conf-template.j2 dest=/etc/nginx/sites-enabled/phpinfo.{{ wsl_domain_ending }}.conf
   notify: reload nginx
