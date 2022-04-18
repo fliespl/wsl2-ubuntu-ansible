@@ -40,3 +40,10 @@
     - "/etc/php/{{ php_version }}/cli/conf.d/99-custom.ini"
   notify:
     - Reload PHP
+
+- name: Pool config for php {{ php_version }}
+  template:
+    src: templates/pool.conf-template.j2
+    dest: "/etc/php/{{ php_version }}/fpm/pool.d/z-www-overrides.conf"
+  notify:
+    - Reload PHP
