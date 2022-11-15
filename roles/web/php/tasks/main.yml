@@ -25,6 +25,11 @@
   loop_control:
     loop_var: php_version
 
+- name: Select PHP {{ php_default_version }} version selected
+  alternatives:
+    name: php
+    path: /usr/bin/php{{ php_default_version }}
+
 - name: "Make sure /var/www/tools/php exists"
   file: path=/var/www/tools/php state=directory mode=0755 owner=root group=root
 

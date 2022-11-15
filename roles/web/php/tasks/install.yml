@@ -27,11 +27,6 @@
 - name: Ensure PHP {{ php_version }} FPM is started and enabled on boot.
   service: name=php{{ php_version }}-fpm state=started enabled=true
 
-- name: Select PHP {{ php_default_version }} version selected
-  alternatives:
-    name: php
-    path: /usr/bin/php{{ php_default_version }}
-
 
 - name: Disable opcache for php {{ php_version }}
   template: src=templates/php-custom.ini-template.j2 dest="{{ item }}"
