@@ -4,8 +4,6 @@ dev=eth0
 currentIP=$(ip addr show $dev | grep 'inet\b' | awk '{print $2}' | head -n 1)
 ip addr del $currentIP dev $dev
 
-ip addr add {{ wsl_private_ip }}/24 broadcast 192.168.50.255 dev $dev
+ip addr add {{ wsl_private_ip }}/24 broadcast {{ wsl_prefix }}.255 dev $dev
 
-ip route add 0.0.0.0/0 via 192.168.50.88 dev eth0
-
-#sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+ip route add default via {{ wsl_windows_ip }} dev $dev proto kernel

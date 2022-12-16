@@ -1,57 +1,24 @@
-- name: Add nginx key
-  ansible.builtin.apt_key:
-    id: "4f4ea0aae5267a6c"
-    keyserver: keyserver.ubuntu.com
-    keyring: /usr/share/keyrings/nginx-archive-keyring.gpg
+- name: Download gpg key
+  ansible.builtin.get_url:
+    url: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x4f4ea0aae5267a6c
+    dest: /usr/share/keyrings/nginx.gpg_armored
 
-- name: Check if nginx-full installed
-  shell: "dpkg-query --showformat='${Version}' --show nginx-full"
-  failed_when: false
-  changed_when: false
-  check_mode: false
-  register: register_nginx_version
+- name: De-Armor GPG key
+  ansible.builtin.shell: gpg --dearmor < /usr/share/keyrings/nginx.gpg_armored > /usr/share/keyrings/nginx.gpg
+  args:
+    creates: /usr/share/keyrings/nginx.gpg
 
-- name: Add repository for nginx-mainline (Ubuntu {{ ansible_distribution_release }})
-  block:
-    - name: Try {{ ansible_distribution_release }} codename
-      ansible.builtin.apt_repository:
-        repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/nginx-mainline/ubuntu {{ ansible_distribution_release }} main"
-        filename: "nginx"
+- name: Add deb repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/nginx.gpg] https://ppa.launchpadcontent.net/ondrej/nginx/ubuntu {{ ansible_distribution_release }} main"
+    filename: "nginx"
 
-    - name: Try installing nginx-full
-      ansible.builtin.apt:
-        name:
-          - nginx-full
-      check_mode: true
-  rescue:
-    - name: "Remove invalid repo"
-      file:
-        path: /etc/apt/sources.list.d/nginx.list
-        state: absent
+- name: Add deb-src repository
+  ansible.builtin.apt_repository:
+    repo: "deb-src [signed-by=/usr/share/keyrings/nginx.gpg] https://ppa.launchpadcontent.net/ondrej/nginx/ubuntu {{ ansible_distribution_release }} main"
+    filename: "nginx"
 
-    - name: "{{ ansible_distribution_release }} repository missing. Fallback to impish"
-      ansible.builtin.apt_repository:
-        repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/nginx-mainline/ubuntu impish main"
-        filename: "nginx"
-      when: ansible_distribution_release in ['jammy']
-
-    - name: "{{ ansible_distribution_release }} repository missing. Fallback to groovy"
-      ansible.builtin.apt_repository:
-        repo: "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://ppa.launchpadcontent.net/ondrej/nginx-mainline/ubuntu groovy main"
-        filename: "nginx"
-      when: ansible_distribution_release in ['hirsute']
-
-    - name: Try installing nginx-full
-      ansible.builtin.apt:
-        name:
-          - nginx-full
-      check_mode: true
-
-    - fail:
-        msg: "No fallback for: {{ ansible_distribution_release }}"
-      when: ansible_distribution_release not in ['jammy', 'hirsute']
-  when: register_nginx_version.stdout == '' or '+deb.sury.org' not in register_nginx_version.stdout
-
-
-- name: Install nginx
-  apt: name=nginx-full
+- name: Install nginx-full
+  ansible.builtin.apt:
+    name:
+      - nginx-full

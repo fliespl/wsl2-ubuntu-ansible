@@ -6,7 +6,7 @@
 
   vars:
     - supported_distros: ['Ubuntu']
-    - supported_releases: ['focal', 'hirsute', 'jammy']
+    - supported_releases: ['jammy']
 
   pre_tasks:
     - name: Fail on not supported distros

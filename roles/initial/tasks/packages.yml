@@ -3,7 +3,6 @@
     name:
       - acl
       - curl
-      - e2fsprogs
       - gnupg
       - sudo
       - ssh

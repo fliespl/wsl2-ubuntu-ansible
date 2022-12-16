@@ -1,6 +1,7 @@
 wsl_username: wsl
-wsl_private_ip: 192.168.50.16
-wsl_windows_ip: 192.168.50.88
+wsl_prefix: 192.168.50
+wsl_private_ip: "{{ wsl_prefix }}.16"
+wsl_windows_ip: "{{ wsl_prefix }}.88"
 wsl_domain_ending: wsl
 
 # you can add options from other roles below
@@ -25,4 +26,4 @@ php_versions:
    - 8.0
    - 8.1
 
-php_default_version: 8.0
+php_default_version: 8.1

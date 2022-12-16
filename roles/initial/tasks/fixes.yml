@@ -7,16 +7,6 @@
   command: "ssh-keygen -A"
   when: not sshkey.stat.exists
 
-# systemd-remount-fs.service - fix
-- name: Check label for main device
-  shell: e2label $(findmnt -n -o SOURCE /)
-  changed_when: no
-  check_mode: false
-  register: disk_label
-
-- name: Update disk label
-  shell: e2label $(findmnt -n -o SOURCE /) cloudimg-rootfs
-  changed_when: disk_label.stdout|length == 0
 
 # systemd-sysusers.service - fix
 - name: Create systemd-sysusers directory
@@ -29,33 +19,9 @@
       LoadCredential=
     dest: /etc/systemd/system/systemd-sysusers.service.d/override.conf
 
-- name: Mask multipathd.service manually since systemd is not available yet
-  file:
-    src: /dev/null
-    dest: /etc/systemd/system/multipathd.service
-    state: link
-    force: yes
-
-- name: Mask fwupd-refresh.service manually since systemd is not available yet
-  file:
-    src: /dev/null
-    dest: /etc/systemd/system/fwupd-refresh.service
-    state: link
-    force: yes
-
-- name: Mask fwupd-refresh.timer manually since systemd is not available yet
-  file:
-    src: /dev/null
-    dest: /etc/systemd/system/fwupd-refresh.timer
-    state: link
-    force: yes
-
-- name: Mask systemd-timedated manually since systemd is not available yet
-  file:
-    src: /dev/null
-    dest: /etc/systemd/system/systemd-timedated.service
-    state: link
-    force: yes
+- name: Force systemd to reread configs
+  ansible.builtin.systemd:
+    daemon_reload: yes
 
 # fixes curl bug
 - name: Disable IPv6 DNS lookup

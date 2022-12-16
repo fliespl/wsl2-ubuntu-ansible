@@ -6,6 +6,4 @@
 
 - include: fixes.yml
 
-- include: genie.yml
-
 - include: networking.yml
