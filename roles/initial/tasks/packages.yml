@@ -6,6 +6,7 @@
       - gnupg
       - sudo
       - ssh
+      - apt-transport-https
     state: present
 
 #- name: Install fallback packages for Jammy
