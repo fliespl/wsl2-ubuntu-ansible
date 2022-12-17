@@ -9,6 +9,7 @@
     - [ "vars/setup.yml", "vars/setup.yml.dist" ] # fallback to .dist
 
   roles:
+    - { role: initial, tags: initial }
     - { role: web/nginx, tags: nginx }
     - { role: web/mailhog, tags: mailhog }
     - { role: web/redis, tags: redis }
