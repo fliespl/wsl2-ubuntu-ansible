@@ -51,5 +51,13 @@
   notify: reload nginx
 
 
+- name: Create user vhosts
+  template:
+    src: "{{ item }}"
+    dest: /etc/nginx/sites-enabled/{{ item | basename | regex_replace('\.j2$', '') }}
+  with_fileglob:
+    - "{{ role_path}}/../../../user-config/nginx/vhosts/*.j2"
+  notify: reload nginx
+
 - name: Ensure nginx is started and enabled on boot.
   service: name=nginx state=started enabled=true

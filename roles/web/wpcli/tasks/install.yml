@@ -1,0 +1,18 @@
+- name: Check if WP-Cli binary exists
+  stat: path=/usr/local/bin/wp
+  register: register_wcli_binary
+
+- name: Get WP-Cli version
+  shell: /usr/local/bin/wp cli version --allow-root | sed "s/WP-CLI //"
+  changed_when: false
+  register: register_wpcli_version
+  when: register_wcli_binary.stat.exists
+  check_mode: no
+
+- name: Install wp-cli binary
+  get_url:
+      url: "https://github.com/wp-cli/wp-cli/releases/download/v{{ wpcli_version }}/wp-cli-{{ wpcli_version }}.phar"
+      dest: /usr/local/bin/wp
+      force: yes
+      mode: 0755
+  when: not register_wcli_binary.stat.exists or register_wpcli_version.stdout is version(wpcli_version, 'ne')

@@ -1,0 +1,5 @@
+- ansible.builtin.include_tasks: install.yml
+  when: phpstorm_install
+
+- ansible.builtin.include_tasks: uninstall.yml
+  when: not phpstorm_install

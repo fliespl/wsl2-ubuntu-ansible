@@ -1,0 +1,18 @@
+- name: Download gpg key
+  ansible.builtin.get_url:
+    url: https://dl.yarnpkg.com/debian/pubkey.gpg
+    dest: /usr/share/keyrings/yarn.gpg_armored
+
+- name: De-Armor GPG key
+  ansible.builtin.shell: gpg --dearmor < /usr/share/keyrings/yarn.gpg_armored > /usr/share/keyrings/yarn.gpg
+  args:
+    creates: /usr/share/keyrings/yarn.gpg
+
+- name: apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main"
+    state: present
+    filename: yarn
+
+- name: Install Yarn
+  apt: pkg=yarn state=latest

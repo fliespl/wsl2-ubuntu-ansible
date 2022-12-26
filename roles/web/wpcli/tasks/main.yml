@@ -1,0 +1,5 @@
+- ansible.builtin.include_tasks: install.yml
+  when: wpcli_install
+
+- ansible.builtin.include_tasks: uninstall.yml
+  when: not wpcli_install

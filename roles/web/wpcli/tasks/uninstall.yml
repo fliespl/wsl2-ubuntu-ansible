@@ -1,0 +1,4 @@
+- name: Remove wp-cli binary
+  ansible.builtin.file:
+    path: /usr/local/bin/wp
+    state: absent

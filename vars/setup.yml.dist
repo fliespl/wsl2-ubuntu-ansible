@@ -6,7 +6,31 @@ wsl_domain_ending: wsl
 
 # you can add options from other roles below
 
-# roles
+### roles
+
+user_packages: []
+
+
+
+# nodejs
+nodejs_install: true
+nodejs_version: 18
+
+# wpcli
+wpcli_install: true
+wpcli_version: 2.7.1
+
+# yarn
+yarn_install: true
+
+# phpstorm
+phpstorm_install: true
+phpstorm_version: newest
+
+
+
+
+
 mariadb_version: 10.6
 mariadb_root_password: wsl
 
@@ -25,5 +49,6 @@ php_versions:
    - 7.4
    - 8.0
    - 8.1
+   - 8.2
 
 php_default_version: 8.1

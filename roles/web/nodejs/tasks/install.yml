@@ -1,0 +1,26 @@
+- name: Download gpg key
+  ansible.builtin.get_url:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    dest: /usr/share/keyrings/nodesource.gpg_armored
+
+- name: De-Armor GPG key
+  ansible.builtin.shell: gpg --dearmor < /usr/share/keyrings/nodesource.gpg_armored > /usr/share/keyrings/nodesource.gpg
+  args:
+    creates: /usr/share/keyrings/nodesource.gpg
+
+- name: apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_{{ nodejs_version }}.x {{ ansible_distribution_release }} main"
+    state: present
+    filename: nodejs
+
+- name: apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb-src [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_{{ nodejs_version }}.x {{ ansible_distribution_release }} main"
+    state: present
+    filename: nodejs
+
+- name: Install nodejs
+  ansible.builtin.apt:
+    name: nodejs
+    state: latest

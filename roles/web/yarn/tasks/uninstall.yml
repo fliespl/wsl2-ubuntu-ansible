@@ -1,0 +1,19 @@
+- name: Remove gpg key (armored)
+  ansible.builtin.file:
+    path: /usr/share/keyrings/yarn.gpg_armored
+    state: absent
+
+- name: Remove gpg key
+  ansible.builtin.file:
+    path: /usr/share/keyrings/yarn.gpg
+    state: absent
+
+- name: Remove repository file
+  ansible.builtin.file:
+    path: /etc/sources.list.d/yarn.list
+    state: absent
+
+- name: Uninstall Yarn
+  apt:
+    name: yarn
+    state: absent

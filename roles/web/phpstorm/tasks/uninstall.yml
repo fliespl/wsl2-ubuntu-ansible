@@ -1,0 +1,9 @@
+- name: Remove link
+  ansible.builtin.file:
+    path: /usr/local/bin/phpstorm
+    state: absent
+
+- name: Remove directory
+  ansible.builtin.file:
+    path: /opt/phpstorm
+    state: absent

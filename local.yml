@@ -10,9 +10,14 @@
 
   roles:
     - { role: initial, tags: initial }
+    - { role: web/nodejs, tags: nodejs }
+    - { role: web/wpcli, tags: wpcli }
+    - { role: web/yarn, tags: yarn }
     - { role: web/nginx, tags: nginx }
     - { role: web/mailhog, tags: mailhog }
     - { role: web/redis, tags: redis }
     - { role: web/mariadb, tags: mysql,mariadb }
     - { role: web/php, tags: php }
     - { role: web/phpmyadmin, tags: pma }
+
+    - { role: web/phpstorm, tags: phpstorm }

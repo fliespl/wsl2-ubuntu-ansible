@@ -1,0 +1,88 @@
+- name: Check newest PHPStorm version
+  shell: 'curl -s "https://data.services.jetbrains.com/products/releases?code=PS&latest=true&type=release&_=$(date +%s)" | jq -r ".PS[0].version"'
+  register: latest_phpstorm_version
+  when: phpstorm_version == 'newest' or phpstorm_version == 'latest'
+  changed_when: false
+  args:
+    warn: false
+  check_mode: no
+
+- name: Set newest version info
+  set_fact:
+    phpstorm_version: "{{ latest_phpstorm_version.stdout }}"
+  when: latest_phpstorm_version is defined
+
+
+- apt:
+    state: present
+    name:
+      - libatk1.0-0
+      - libxkbcommon-x11-0
+      - libxdamage1
+      - libgbm-dev
+      - libatk-bridge2.0-0
+      - libnss3
+      - libnspr4
+      - libxcomposite1
+      - libxfixes3
+      - libxrandr2
+      - libasound2
+      - libxcursor1
+      - libgbm1
+      - libxss1
+      - libappindicator1
+      - libgdk-pixbuf2.0-0
+      - libgtk-3-0
+      - libdbus-glib-1-2
+      - libgconf-2-4
+      - libx11-xcb1
+
+- name: Get PHPStorm version
+  shell: cat /opt/phpstorm/VERSION
+  ignore_errors: yes
+  failed_when: false
+  changed_when: false
+  register: register_phpstorm_version
+  check_mode: no
+
+- name: Delete old version
+  file: path=/opt/phpstorm state=absent
+  when: register_phpstorm_version.rc == 0 and register_phpstorm_version.stdout is version(phpstorm_version, 'ne')
+
+- name: "Make sure /opt/phpstorm exists"
+  file:
+    path: /opt/phpstorm
+    state: directory
+    owner: "{{ wsl_username }}"
+    group: "{{ wsl_username }}"
+
+- name: Decompress PHPStorm archive
+  unarchive:
+    src: https://download.jetbrains.com/webide/PhpStorm-{{ phpstorm_version }}.tar.gz
+    remote_src: yes
+    dest: /opt/phpstorm/
+    extra_opts: [ --strip-components=1 ]
+    owner: "{{ wsl_username }}"
+    group: "{{ wsl_username }}"
+  when: register_phpstorm_version.rc != 0 or register_phpstorm_version.stdout is version(phpstorm_version, 'ne')
+
+- name: Fix PHPStorm permissions
+  file:
+    path: /opt/phpstorm/
+    owner: "{{ wsl_username }}"
+    group: "{{ wsl_username }}"
+    recurse: yes
+
+- name: Save PHPStorm version
+  copy:
+    content: "{{ phpstorm_version }}"
+    dest: /opt/phpstorm/VERSION
+    owner: "{{ wsl_username }}"
+    group: "{{ wsl_username }}"
+  when: register_phpstorm_version.rc != 0 or register_phpstorm_version.stdout is version(phpstorm_version, 'ne')
+
+- name: Create symlink
+  file:
+    src: /opt/phpstorm/bin/phpstorm.sh
+    dest: /usr/local/bin/phpstorm
+    state: link
