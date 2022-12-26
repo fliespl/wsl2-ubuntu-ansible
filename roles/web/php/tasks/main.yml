@@ -1,4 +1,4 @@
-- include: ubuntu.yml
+- include_tasks: ubuntu.yml
 
 - name: Get installed php versions
   no_log: True

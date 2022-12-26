@@ -1,9 +1,9 @@
-- ansible.builtin.include: packages.yml
+- ansible.builtin.import_tasks: packages.yml
 
-- ansible.builtin.include: user.yml
+- ansible.builtin.import_tasks: user.yml
 
-- ansible.builtin.include: wsl.yml
+- ansible.builtin.import_tasks: wsl.yml
 
-- ansible.builtin.include: fixes.yml
+- ansible.builtin.import_tasks: fixes.yml
 
-- ansible.builtin.include: networking.yml
+- ansible.builtin.import_tasks: networking.yml

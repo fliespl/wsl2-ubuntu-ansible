@@ -1,4 +1,4 @@
-- include: ubuntu.yml
+- include_tasks: ubuntu.yml
 
 - name: "generate main password hash"
   shell: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048 creates=/etc/ssl/certs/dhparam.pem
