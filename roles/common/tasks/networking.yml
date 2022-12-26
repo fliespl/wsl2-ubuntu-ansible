@@ -1,9 +1,9 @@
 # Setup startup service that setups IP on each launch
 - name: "Make sure /opt exists"
-  file: path=/opt state=directory mode=0755 owner=root group=root
+  ansible.builtin.file: path=/opt state=directory mode=0755 owner=root group=root
 
 - name: "Install startup.sh"
-  template:
+  ansible.builtin.template:
     src: opt.startup.sh.j2
     dest: "/opt/startup.sh"
     owner: root
@@ -11,7 +11,7 @@
     mode: 0700
 
 - name: Install startup.service unit file
-  template: src=etc.systemd.startup.service.j2 dest=/etc/systemd/system/startup.service
+  ansible.builtin.template: src=etc.systemd.startup.service.j2 dest=/etc/systemd/system/startup.service
 
 - name: Force reload and restart
   ansible.builtin.systemd:

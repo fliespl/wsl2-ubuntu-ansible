@@ -1,9 +1,0 @@
-- include: packages.yml
-
-- include: user.yml
-
-- include: wsl.yml
-
-- include: fixes.yml
-
-- include: networking.yml

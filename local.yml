@@ -9,7 +9,7 @@
     - [ "vars/setup.yml", "vars/setup.yml.dist" ] # fallback to .dist
 
   roles:
-    - { role: initial, tags: initial }
+    - { role: common, tags: common }
     - { role: web/nodejs, tags: nodejs }
     - { role: web/wpcli, tags: wpcli }
     - { role: web/yarn, tags: yarn }

@@ -1,10 +1,10 @@
 # ssh.service - fix
 - name: Check if /etc/ssh/ssh_host_ed25519_key exists
-  stat: path=/etc/ssh/ssh_host_ed25519_key
+  ansible.builtin.stat: path=/etc/ssh/ssh_host_ed25519_key
   register: sshkey
 
 - name: Create ssh host keys
-  command: "ssh-keygen -A"
+  ansible.builtin.command: "ssh-keygen -A"
   when: not sshkey.stat.exists
 
 
@@ -13,7 +13,7 @@
   file: path=/etc/systemd/system/systemd-sysusers.service.d/ state=directory
 
 - name: Edit overrides for systemd-sysusers
-  copy:
+  ansible.builtin.copy:
     content: |
       [Service]
       LoadCredential=
@@ -25,7 +25,7 @@
 
 # fixes curl bug
 - name: Disable IPv6 DNS lookup
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/gai.conf
     line: "precedence ::ffff:0:0/96  100"
     state: present

@@ -1,0 +1,9 @@
+- ansible.builtin.include: packages.yml
+
+- ansible.builtin.include: user.yml
+
+- ansible.builtin.include: wsl.yml
+
+- ansible.builtin.include: fixes.yml
+
+- ansible.builtin.include: networking.yml

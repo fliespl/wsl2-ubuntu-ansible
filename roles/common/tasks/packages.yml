@@ -1,5 +1,5 @@
 - name: Install packages required by various tools
-  apt:
+  ansible.builtin.apt:
     name:
       - acl
       - curl
@@ -10,6 +10,6 @@
     state: present
 
 - name: Install user defined packages
-  apt:
+  ansible.builtin.apt:
     name: "{{ user_packages }}"
     state: present
