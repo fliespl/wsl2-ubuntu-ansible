@@ -12,6 +12,32 @@
     name: "{{ wsl_username }}"
     shell: /bin/bash
 
+
+- name: Copy private keys
+  copy:
+    src: "{{ item }}"
+    dest: "/home/{{wsl_username}}/.ssh/"
+    owner: "{{wsl_username}}"
+    group: "{{wsl_username}}"
+    mode: 0600
+  with_fileglob:
+    - "{{ role_path }}/../../user-config/ssh/private_keys/*"
+
+- name: "Generate public keys from private keys"
+  shell: "ssh-keygen -y -f /home/{{wsl_username}}/.ssh/{{ item|basename }} > /home/{{wsl_username}}/.ssh/{{ item|basename }}.pub"
+  args:
+    creates: "/home/{{wsl_username}}/.ssh/{{ item|basename }}.pub"
+  with_fileglob:
+    - "{{ role_path }}/../../user-config/ssh/private_keys/*"
+  become_user: "{{wsl_username}}"
+
+- name: Add authorized keys for {{ wsl_username }}
+  authorized_key:
+    user: "{{ wsl_username }}"
+    key: "{{ lookup('file', item) }}"
+  with_fileglob:
+    - "{{ role_path }}/../../user-config/ssh/public_keys/*"
+
 - name: Allow {{ wsl_username }} to sudo
   template:
     src: etc.sudoers.d.user.j2
