@@ -10,6 +10,7 @@
 
   roles:
     - { role: common, tags: common }
+    - { role: web/composer-with-wrapper, tags: composer-with-wrapper }
     - { role: web/nodejs, tags: nodejs }
     - { role: web/wpcli, tags: wpcli }
     - { role: web/yarn, tags: yarn }

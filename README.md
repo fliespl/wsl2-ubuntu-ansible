@@ -21,6 +21,14 @@ This project is still WIP. Errors can happen every now and then.
 ## Windows
 1. Add to Windows hosts file: `192.168.50.16 pma.wsl phpinfo7.4.wsl phpinfo8.0.wsl mailhog.wsl` so you can access various services via domain
    1. change IP if you used something else in vars file
+2. Make sure following options are set in .wslconfig in C:\Users\<USER>\.wslconfig
+
+```
+[wsl2]
+localhostForwarding=false
+guiApplications=false # do not set if you want to use builtin wslg
+swap=0 # recommended
+```
 
 ## Start WSL2 manually
 1. Run `wsl` or `wsl -d distro-name`

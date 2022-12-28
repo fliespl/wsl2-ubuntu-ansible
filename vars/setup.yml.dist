@@ -10,7 +10,8 @@ wsl_domain_ending: wsl
 
 user_packages: []
 
-
+# composer with wrapper
+composer_wrapper_install: true
 
 # nodejs
 nodejs_install: true

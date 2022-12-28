@@ -1,0 +1,7 @@
+- ansible.builtin.include_tasks: install.yml
+  when: composer_wrapper_install
+
+- ansible.builtin.include_tasks: uninstall.yml
+  when: not composer_wrapper_install
+
+

@@ -1,0 +1,39 @@
+- name: Remove composer 1
+  ansible.builtin.file:
+    path: /usr/local/bin/composer1.phar
+    state: absent
+
+- name: Remove composer 2
+  ansible.builtin.file:
+    path: /usr/local/bin/composer2.phar
+    state: absent
+
+- name: Remove composer wrapper
+  ansible.builtin.file:
+    path: /usr/local/bin/composer
+    state: absent
+
+- name: Remove php wrapper
+  ansible.builtin.file:
+    path: /usr/local/bin/php
+    state: absent
+
+- name: Remove composer version selector
+  ansible.builtin.file:
+    path: /usr/local/bin/composer-version-selector
+    state: absent
+
+- name: Remove php version selector
+  ansible.builtin.file:
+    path: /usr/local/bin/php-version-selector
+    state: absent
+
+- name: Remove cron composer v1 update
+  ansible.builtin.cron:
+    name: "Update composer v1"
+    state: absent
+
+- name: Remove cron composer v2 update
+  ansible.builtin.cron:
+    name: "Update composer v2"
+    state: absent

@@ -1,0 +1,51 @@
+- name: Setup composer proxy
+  template:
+    src: composer.sh
+    dest: /usr/local/bin/composer
+    mode: 0755
+
+- name: install php-version-wrapper
+  template:
+    src: php-version-wrapper.sh
+    dest: /usr/local/bin/php
+    mode: 0755
+
+- name: install php-version-selector
+  template:
+    src: php-version-selector.php
+    dest: /usr/local/bin/php-version-selector
+    mode: 0755
+
+- name: install composer-version-selector
+  template:
+    src: composer-version-selector.php
+    dest: /usr/local/bin/composer-version-selector
+    mode: 0755
+
+- name: Download version 1
+  ansible.builtin.get_url:
+    url: https://getcomposer.org/composer-1.phar
+    dest: /usr/local/bin/composer1.phar
+    mode: 0755
+  become: true
+
+- name: Update composer v1
+  ansible.builtin.cron:
+    name: "Update composer v1"
+    special_time: daily
+    job: "composer1 self-update --1 --quiet"
+  become: true
+
+- name: Download version 2
+  ansible.builtin.get_url:
+    url: https://getcomposer.org/composer-2.phar
+    dest: /usr/local/bin/composer2.phar
+    mode: 0755
+  become: true
+
+- name: Update composer v2
+  ansible.builtin.cron:
+    name: "Update composer v2"
+    special_time: daily
+    job: "composer2 self-update --2 --quiet"
+  become: true
